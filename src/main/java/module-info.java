@@ -4,6 +4,6 @@ module com.example.backupsystem {
 
     requires org.controlsfx.controls;
 
-    opens com.example.backupsystem to javafx.fxml;
-    exports com.example.backupsystem;
+    opens it.backup.system to javafx.fxml;
+    exports it.backup.system;
 }
