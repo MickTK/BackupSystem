@@ -1,4 +1,4 @@
-package it.backup.system;
+package it.backup.system.utils;
 
 import javafx.scene.control.TextArea;
 
@@ -9,18 +9,18 @@ import java.util.zip.*;
 public class Utils {
 
     /** Controlli sulla cartella di origine **/
-    public static boolean isSourcePathValid(File file){
-        return isSourcePathValid(file,null);
+    public static boolean isSourcePathValid(File path){
+        return isSourcePathValid(path,null);
     }
-    public static boolean isSourcePathValid(File file, TextArea textArea){
-        if (file == null){
+    public static boolean isSourcePathValid(File path, TextArea textArea){
+        if (path == null){
             addLog(textArea,"Il percorso della cartella di origine non è valido.");
             return false;
         }
-        if (!file.exists()){
+        if (!path.exists()){
             addLog(textArea, "La cartella di origine non esiste.");
         }
-        if (!file.isDirectory()){
+        if (!path.isDirectory()){
             addLog(textArea,"Il file selezionato non è una cartella.");
             return false;
         }
@@ -28,18 +28,18 @@ public class Utils {
     }
 
     /** Controlli sulla cartella di destinazione **/
-    public static boolean isDestinationPathValid(File file){
-        return isDestinationPathValid(file,null);
+    public static boolean isDestinationPathValid(File path){
+        return isDestinationPathValid(path,null);
     }
-    public static boolean isDestinationPathValid(File file, TextArea textArea){
-        if (file == null){
+    public static boolean isDestinationPathValid(File path, TextArea textArea){
+        if (path == null){
             addLog(textArea,"Percorso non valido.");
             return false;
         }
-        if (!file.exists()){
+        if (!path.exists()){
             addLog(textArea, "La cartella di destinazione non esiste.");
         }
-        if (!file.isDirectory()){
+        if (!path.isDirectory()){
             addLog(textArea,"Il file selezionato non è una cartella.");
             return false;
         }
@@ -87,6 +87,24 @@ public class Utils {
     }
 
 
+    public static String concatPath(String... names){
+        String path = null;
+
+        for (int i = 0; i < names.length; i ++){
+            if (i == 0)
+                path = names[i];
+            else if (i > 0)
+                path += "/" + names[i];
+        }
+
+        return path;
+    }
+
+
+
+
+
+
 
 
 
@@ -126,19 +144,4 @@ public class Utils {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

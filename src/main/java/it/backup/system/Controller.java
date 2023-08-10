@@ -1,5 +1,8 @@
 package it.backup.system;
 
+import it.backup.system.backup.Backup;
+import it.backup.system.backup.BackupType;
+import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -8,15 +11,17 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.nio.file.Files;
 
 public class Controller {
 
     @FXML private TextField sourceInput;
-    private File source;
     @FXML private TextField destinationInput;
-    private File destination;
     @FXML private TextArea consoleLog;
+
+    private File source;
+    private File destination;
+
+    private String completeBackupPath;
 
     @FXML
     private void selectSourcePath(ActionEvent event){
@@ -60,42 +65,30 @@ public class Controller {
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
 
             // Numero di cartelle e di file
-            nFolders = Utils.numberOfFolders(source);
-            nFiles = Utils.numberOfFiles(source);
-            log("Cartelle: " + nFolders.toString() + ", files: " + nFiles.toString());
+            //nFolders = Utils.numberOfFolders(source);
+            //nFiles = Utils.numberOfFiles(source);
+            //log("Cartelle: " + nFolders.toString() + ", files: " + nFiles.toString());
 
-            Utils.createZip(source, destination);
+            // Utils.createZip(source, destination);
+            /*try {
+                String dir = new File(Controller.class.getProtectionDomain().getCodeSource().getLocation()
+                        .toURI()).getPath();
+                System.out.println(dir);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }*/
 
-            // iterateFilesRecursively(source);
-        }
-    }
-    public void iterateFilesRecursively(File folder) {
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        iterateFilesRecursively(file);
-                    }
-                    else {
-                        // Nuovo file che sarà salvato nella destinazione come copia di quello originale
-                        File copyFile = new File(file.getPath().replace(sourceInput.getText(), destinationInput.getText()));
-                        // Se il file esiste già nella destinazione
-                        if(Files.exists(copyFile.toPath())){
-                            // Non fa niente e continua con il prossimo
-                            log("Il file \"" + copyFile.getPath() + "\" esiste già.");
-                        }
-                        else{
-                            try{
-                                Files.copy(file.toPath(), copyFile.toPath());
-                            }
-                            catch(Exception e){
-                                log(e.getMessage());
-                            }
-                        }
-                    }
-                }
-            }
+            log("Backup completo in corso.");
+
+            long lastDeltaTime = System.nanoTime();
+            Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
+            new Backup(
+                    source.getAbsolutePath(),
+                    destination.getAbsolutePath(),
+                    BackupType.Complete
+            ).start();
+
+            log("Backup completato in " + deltaTime.toString() + " secondi.");
         }
     }
 
