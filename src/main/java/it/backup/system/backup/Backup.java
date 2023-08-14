@@ -58,6 +58,9 @@ public class Backup {
      * Backup functions
      *****************************************************/
 
+    /**
+     * Effettua il backup in base al tipo
+     */
     public void start(){
         switch (type){
             case Complete:
@@ -69,22 +72,67 @@ public class Backup {
             default: break;
         }
     }
-    private void startComplete(File folder) {
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    File copyFile = new File(file.getAbsolutePath().replace(
-                            source,
-                            Utils.concatPath(destination,folderName)
-                    ));
 
-                    if (file.isDirectory()) {
-                        if(!Files.exists(copyFile.toPath())) copyFile.mkdir();
-                        startComplete(file);
+    /**
+     * Effettua un backup completo
+     * @param sourceFolder
+     */
+    private void startComplete(File sourceFolder) {
+        if (sourceFolder.isDirectory()) {
+            File[] sourceFiles = sourceFolder.listFiles();
+            if (sourceFiles != null) {
+                for (File sourceFile : sourceFiles) {
+                    // Crea un file con il percorso di destinazione
+                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
+                            source, Utils.concatPath(destination,folderName)
+                    ));
+                    // Se il file è una cartella, la crea
+                    if (sourceFile.isDirectory()) {
+                        if(!Files.exists(destinationFile.toPath())) destinationFile.mkdir();
+                        startComplete(sourceFile);
                     }
-                    else if (file.isFile()) {
-                        try{Files.copy(file.toPath(), copyFile.toPath());}
+                    // Se il file non è una cartella, copia il contenuto del file originale nella cartella di destinazione
+                    else if (sourceFile.isFile()) {
+                        try{Files.copy(sourceFile.toPath(), destinationFile.toPath());}
+                        catch(Exception e){System.out.println(e.getMessage());}
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Effettua un backup incrementale
+     * @param sourceFolder
+     */
+    private void startIncremental(File sourceFolder) {
+        // Iteriamo su ogni file della sorgente
+        // Cerchiamo il file nella cartella del backup completo
+            // Se il file non è presente, lo creiamo nella cartella di backup incrementale
+            // Se il file è presente ma la data di modifica è precedente alla data di modifica della sorgente, lo salva nella cartella di backup incrementale
+        // Iteriamo su ogni file del backup completo
+        // Cerchiamo il file nella cartella sorgente
+            // Se il file non è presente, ne creiamo uno vuoto marchiato* nella cartella di backup incrementale
+
+
+
+
+        if (sourceFolder.isDirectory()) {
+            File[] sourceFiles = sourceFolder.listFiles();
+            if (sourceFiles != null) {
+                for (File sourceFile : sourceFiles) {
+                    // Crea un file con il percorso di destinazione
+                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
+                            source, Utils.concatPath(destination,folderName)
+                    ));
+                    // Se il file è una cartella, la crea
+                    if (sourceFile.isDirectory()) {
+                        if(!Files.exists(destinationFile.toPath())) destinationFile.mkdir();
+                        startComplete(sourceFile);
+                    }
+                    // Se il file non è una cartella, copia il contenuto del file originale nella cartella di destinazione
+                    else if (sourceFile.isFile()) {
+                        try{Files.copy(sourceFile.toPath(), destinationFile.toPath());}
                         catch(Exception e){System.out.println(e.getMessage());}
                     }
                 }

@@ -61,32 +61,19 @@ public class Controller {
 
     @FXML
     private void process(ActionEvent event){
-        Integer nFolders, nFiles;
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
 
-            // Numero di cartelle e di file
-            //nFolders = Utils.numberOfFolders(source);
-            //nFiles = Utils.numberOfFiles(source);
-            //log("Cartelle: " + nFolders.toString() + ", files: " + nFiles.toString());
-
-            // Utils.createZip(source, destination);
-            /*try {
-                String dir = new File(Controller.class.getProtectionDomain().getCodeSource().getLocation()
-                        .toURI()).getPath();
-                System.out.println(dir);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }*/
-
             log("Backup completo in corso.");
+            log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
+            log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
 
             long lastDeltaTime = System.nanoTime();
-            Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
             new Backup(
                     source.getAbsolutePath(),
                     destination.getAbsolutePath(),
                     BackupType.Complete
             ).start();
+            Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
 
             log("Backup completato in " + deltaTime.toString() + " secondi.");
         }

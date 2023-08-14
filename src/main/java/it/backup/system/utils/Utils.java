@@ -3,12 +3,16 @@ package it.backup.system.utils;
 import javafx.scene.control.TextArea;
 
 import java.io.File;
-import java.io.*;
-import java.util.zip.*;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 public class Utils {
 
-    /** Controlli sulla cartella di origine **/
+    /**
+     * Effettua dei controlli di validità sulla cartella di origine
+     * @param path
+     * @return
+     */
     public static boolean isSourcePathValid(File path){
         return isSourcePathValid(path,null);
     }
@@ -27,7 +31,11 @@ public class Utils {
         return true;
     }
 
-    /** Controlli sulla cartella di destinazione **/
+    /**
+     * Effettua dei controlli di validità sulla cartella di destinazione
+     * @param path
+     * @return
+     */
     public static boolean isDestinationPathValid(File path){
         return isDestinationPathValid(path,null);
     }
@@ -46,7 +54,11 @@ public class Utils {
         return true;
     }
 
-    /** Restituisce il numero di file e cartelle trovate **/
+    /**
+     * Restituisce il numero di file della cartella e delle sue sotto-cartelle
+     * @param folder
+     * @return
+     */
     public static Integer numberOfFiles(File folder){
         int counter = 0;
         if (folder.isDirectory()) {
@@ -64,6 +76,12 @@ public class Utils {
         }
         return counter;
     }
+
+    /**
+     * Restituisce il numero di sotto-cartelle della cartella radice
+     * @param folder
+     * @return
+     */
     public static Integer numberOfFolders(File folder){
         int counter = 0;
         if (folder.isDirectory()) {
@@ -80,13 +98,21 @@ public class Utils {
         return counter;
     }
 
-    /** Log **/
+    /**
+     * Aggiunge del testo in coda al box che compare nell'interfaccia utente
+     * @param textArea
+     * @param text
+     */
     public static void addLog(TextArea textArea, String text){
         if (textArea != null && text != null)
             textArea.appendText(text + "\n");
     }
 
-
+    /**
+     * Concatena delle stringhe separandole con degli slash (/)
+     * @param names
+     * @return
+     */
     public static String concatPath(String... names){
         String path = null;
 
@@ -100,48 +126,13 @@ public class Utils {
         return path;
     }
 
-
-
-
-
-
-
-
-
-
-    public static boolean createZip(File source, File destination){
-        if (!isSourcePathValid(source) || !isDestinationPathValid(destination)) return false;
-
-        String zipFilePath = destination.getAbsolutePath() + "/" + source.getName() + ".zip";
-
-        try (FileOutputStream fos = new FileOutputStream(zipFilePath)) {
-            try (ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-                zipDirectory(source, source.getName(), zipOut);
-                return true;
-            } catch (IOException e) { e.printStackTrace(); }
-        } catch (IOException e) { e.printStackTrace(); }
-        return true;
-    }
-
-    public static void zipDirectory(File folder, String parentFolder, ZipOutputStream zipOut) throws IOException {
-        File[] files = folder.listFiles();
-        byte[] buffer = new byte[1024];
-
-        if (files == null) return;
-        for (File file : files) {
-            if (file.isDirectory()) {
-                zipDirectory(file, parentFolder + "/" + file.getName(), zipOut);
-            }
-            else {
-                try(FileInputStream fis = new FileInputStream(file)) {
-                    zipOut.putNextEntry(new ZipEntry(parentFolder + "/" + file.getName()));
-
-                    int length;
-                    while ((length = fis.read(buffer)) > 0) {
-                        zipOut.write(buffer, 0, length);
-                    }
-                }
-            }
-        }
+    /**
+     * Ottiene il timestamp attuale (dd/mm/yyyy)
+     * @return timestamp
+     */
+    public static String getTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return dtf.format(now);
     }
 }
