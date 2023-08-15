@@ -3,6 +3,13 @@ package it.backup.system.utils;
 import javafx.scene.control.TextArea;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 
@@ -134,5 +141,29 @@ public class Utils {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
+    }
+
+    /**
+     * Calcola la differenza tra le date delle ultime modifiche di due file
+     * @param file1
+     * @param file2
+     * @return "> 0" il file 1 è stato modificato prima del file 2
+     * @throws Exception
+     */
+    public static int lastModifiedDateCompare(File file1, File file2) throws Exception {
+        Path file1Path = file1.toPath();
+        Path file2Path = file2.toPath();
+
+        BasicFileAttributes attributes1 = Files.readAttributes(file1Path, BasicFileAttributes.class);
+        FileTime lastModifiedTime1 = attributes1.lastModifiedTime();
+        Instant instant1 = lastModifiedTime1.toInstant();
+        LocalDateTime lastModifiedDateTime1 = instant1.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        BasicFileAttributes attributes2 = Files.readAttributes(file2Path, BasicFileAttributes.class);
+        FileTime lastModifiedTime2 = attributes2.lastModifiedTime();
+        Instant instant2 = lastModifiedTime2.toInstant();
+        LocalDateTime lastModifiedDateTime2 = instant2.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        return lastModifiedDateTime2.compareTo(lastModifiedDateTime1);
     }
 }

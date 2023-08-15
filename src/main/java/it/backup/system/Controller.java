@@ -71,7 +71,7 @@ public class Controller {
             new Backup(
                     source.getAbsolutePath(),
                     destination.getAbsolutePath(),
-                    BackupType.Complete
+                    BackupType.Incremental
             ).start();
             Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
 
