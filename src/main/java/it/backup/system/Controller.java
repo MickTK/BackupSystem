@@ -61,6 +61,11 @@ public class Controller {
 
     @FXML
     private void process(ActionEvent event){
+        if (Application.DEBUG){
+            source = new File("/home/michele/Desktop/Da");
+            destination = new File("/home/michele/Desktop/A");
+        }
+
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
 
             log("Backup completo in corso.");

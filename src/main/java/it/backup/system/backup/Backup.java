@@ -4,11 +4,13 @@ import it.backup.system.utils.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Backup {
     private final int MIN_INCREMENTAL_NUMBER = 1;
+    private final String DELETED_FILES_FILE_NAME = "deleted_files.txt";
 
     private BackupType type;    // Rappresenta il tipo di backup da effettuare
     private String source;      // Rappresenta la cartella da salvare
@@ -77,6 +79,7 @@ public class Backup {
                     incrementalFolderName = getIncrementalBackupFolderName();
                     new File(Utils.concatPath(destination,incrementalFolderName)).mkdir();
                     startIncremental(new File(source));
+                    startIncrementalDeleted(completeBackupFolder);
                 }
                 else {
                     System.out.println("Non esiste nessun backup completo chiamato " + folderName + " all'interno della destinazione.");
@@ -132,51 +135,35 @@ public class Backup {
      * @param sourceFolder
      */
     private void startIncremental(File sourceFolder) {
-
         if (sourceFolder.isDirectory()) {
             File[] sourceFiles = sourceFolder.listFiles();
             if (sourceFiles != null) {
-                // Iteriamo su ogni file della sorgente
                 for (File sourceFile : sourceFiles) {
+                    if (isIgnored(sourceFile)) continue;
+
                     // Cerchiamo il file nella cartella del backup completo
                     File completeFile = new File(sourceFile.getAbsolutePath().replace(
                             source, completeBackupFolder.getAbsolutePath()
                     ));
-                    // Se il file è presente ma la data di modifica è precedente alla data di modifica della sorgente, lo salva nella cartella di backup incrementale
-                    if (completeFile.exists()){
-                        try{
-                            if (Utils.lastModifiedDateCompare(sourceFile, completeFile) < 0){
-                                File destinationFile = new File(sourceFile.getAbsolutePath().replace(
-                                        source, Utils.concatPath(destination,incrementalFolderName)
-                                ));
-                                if (sourceFile.isFile()) {
-                                    try{Files.copy(sourceFile.toPath(), destinationFile.toPath());}
-                                    catch(Exception e){System.out.println(e.getMessage());}
-                                }
-                                else if (sourceFile.isDirectory()){
-                                    destinationFile.mkdir();
-                                }
+                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
+                            source, Utils.concatPath(destination,incrementalFolderName)
+                    ));
+
+                    /* File creati/modificati */
+                    try {
+                        if (sourceFile.isFile()){
+                            // Se il file è stato creato/modificato
+                            if (!completeFile.exists() || (completeFile.exists() && Utils.lastModifiedDateCompare(sourceFile, completeFile) < 0)){
+                                if(!destinationFile.getParentFile().exists())
+                                    destinationFile.getParentFile().mkdirs();
+                                Files.copy(sourceFile.toPath(), destinationFile.toPath());
                             }
                         }
-                        catch (Exception e){
-                            System.out.println(e.getMessage());
-                        }
-                    }
-                    // Se il file non è presente, lo creiamo nella cartella di backup incrementale
-                    else {
-                        File destinationFile = new File(sourceFile.getAbsolutePath().replace(
-                                source, Utils.concatPath(destination,incrementalFolderName)
-                        ));
-                        if (sourceFile.isDirectory()) {
-                            if(!Files.exists(destinationFile.toPath())) destinationFile.mkdir();
+                        else if (sourceFile.isDirectory()){
                             startIncremental(sourceFile);
                         }
-                        // Se il file non è una cartella, copia il contenuto del file originale nella cartella di destinazione
-                        else if (sourceFile.isFile()) {
-                            try{Files.copy(sourceFile.toPath(), destinationFile.toPath());}
-                            catch(Exception e){System.out.println(e.getMessage());}
-                        }
                     }
+                    catch (Exception e){System.out.println(e.getMessage());}
                 }
             }
         }
@@ -184,6 +171,47 @@ public class Backup {
         // Iteriamo su ogni file del backup completo
         // Cerchiamo il file nella cartella sorgente
             // Se il file non è presente, ne creiamo uno vuoto marchiato* nella cartella di backup incrementale
+    }
+
+    private void startIncrementalDeleted(File completeFolder){
+        if (completeFolder.isDirectory()) {
+            File[] completeFiles = completeFolder.listFiles();
+            if (completeFiles != null) {
+                for (File completeFile : completeFiles) {
+                    if (isIgnored(completeFile)) continue;
+                    // Cerchiamo il file nella cartella attuale
+                    File sourceFile = new File(completeFile.getAbsolutePath().replace(
+                            Utils.concatPath(destination,folderName), source
+                    ));
+                    File delFile = new File(Utils.concatPath(
+                            destination,
+                            Utils.concatPath(incrementalFolderName, DELETED_FILES_FILE_NAME)));
+
+                    /* File rimossi */
+                    try {
+                        if (completeFile.isFile()){
+                            // Se il file è stato eliminato
+                            if (!sourceFile.exists()){
+                                if (!delFile.exists()) delFile.createNewFile();
+                                String f = completeFile.getAbsolutePath().replace(
+                                        Utils.concatPath(destination,folderName), ""
+                                ) + "\n";
+                                Files.write(
+                                    delFile.toPath(),
+                                    f.getBytes(),
+                                    StandardOpenOption.APPEND
+                                );
+                                System.out.println(delFile.getAbsolutePath());
+                            }
+                        }
+                        else if (completeFile.isDirectory()){
+                            startIncrementalDeleted(completeFile);
+                        }
+                    }
+                    catch (Exception e){System.out.println(e.getMessage());}
+                }
+            }
+        }
     }
 
     /**
@@ -222,10 +250,13 @@ public class Backup {
         Matcher matcher = pattern.matcher(folder);
         if (matcher.matches()) {
             String extractedNumber = matcher.group(1);
-            System.out.println("Numero estratto: " + extractedNumber);
             return Integer.parseInt(extractedNumber) + 1;
         } else {
             return MIN_INCREMENTAL_NUMBER;
         }
+    }
+
+    private boolean isIgnored(File file){
+        return file.getName().equals(DELETED_FILES_FILE_NAME);
     }
 }
