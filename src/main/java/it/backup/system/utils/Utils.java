@@ -5,7 +5,6 @@ import javafx.scene.control.TextArea;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
@@ -120,17 +119,16 @@ public class Utils {
      * @param names
      * @return
      */
-    public static String concatPath(String... names){
-        String path = null;
+    public static String combine(String... names){
+        StringBuilder path = null;
 
-        for (int i = 0; i < names.length; i ++){
-            if (i == 0)
-                path = names[i];
-            else if (i > 0)
-                path += "/" + names[i];
+        if (names.length > 0)
+            path = new StringBuilder(names[0]);
+        for (int i = 1; i < names.length; i ++){
+            path.append("/").append(names[i]);
         }
 
-        return path;
+        return path.toString();
     }
 
     /**

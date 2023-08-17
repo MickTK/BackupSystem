@@ -3,6 +3,7 @@ module com.example.backupsystem {
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
+    requires org.jetbrains.annotations;
 
     opens it.backup.system to javafx.fxml;
     exports it.backup.system;
