@@ -32,14 +32,12 @@ public class Backup {
     public Backup(String sourceFolderPath, String destinationFolderPath){
         this.sourceFolderPath = sourceFolderPath;
         this.destinationFolderPath = destinationFolderPath;
-        this.completeFolderName = new File(sourceFolderPath).getName();
         this.type = Files.exists(new File(Utils.combine(destinationFolderPath, completeFolderName)).toPath()) ?
                 BackupType.Differential : BackupType.Complete;
     }
     public Backup(String sourceFolderPath, String destinationFolderPath, BackupType type){
         this.sourceFolderPath = sourceFolderPath;
         this.destinationFolderPath = destinationFolderPath;
-        this.completeFolderName = new File(sourceFolderPath).getName();
         this.type = type;
     }
 
@@ -78,10 +76,12 @@ public class Backup {
     public void start(){
         switch (type){
             case Complete:
+                completeFolderName = getCompleteBackupFolderName();
                 new File(Utils.combine(destinationFolderPath, completeFolderName)).mkdir();
                 startComplete(new File(sourceFolderPath));
                 break;
             case Incremental:
+                completeFolderName = getLastCompleteBackupFolderName();
                 completeBackupFolder = new File(Utils.combine(destinationFolderPath, completeFolderName));
                 if (completeBackupFolder.exists() && completeBackupFolder.isDirectory()){
                     incrementalFolderName = getIncrementalBackupFolderName();
@@ -132,6 +132,74 @@ public class Backup {
         }
     }
 
+    /**
+     * Ottiene il nome della cartella del backup completo (ad esempio: "Nome (com.x)")
+     * @return il nome della cartella del backup completo
+     */
+    private String getCompleteBackupFolderName(){
+        int max_number = MIN_INCREMENTAL_NUMBER;
+        int current;
+
+        File folder = new File(destinationFolderPath);
+        if (folder.exists() && folder.isDirectory()) {
+            File[] destinationFiles = folder.listFiles();
+            if (destinationFiles != null) {
+                for (File destinationFile : destinationFiles) {
+                    if (destinationFile.isDirectory()){
+                        current = getCompleteBackupFolderNumber(destinationFile.getName());
+                        if (current > max_number){
+                            max_number = current;
+                        }
+                    }
+                }
+            }
+        }
+        return new File(sourceFolderPath).getName() + " (com." + max_number + ")";
+    }
+
+    /**
+     * Cerca e restituisce il numero di backup (completo) nel nome della cartella
+     * @param folder nome della cartella
+     * @return il numero di backup
+     */
+    private int getCompleteBackupFolderNumber(String folder){
+        String regex = new File(sourceFolderPath).getName() + "\\s*\\(\\s*(com\\.(\\d+))\\s*\\)"; // Esempio: "Nome (com.1)"
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(folder);
+        if (matcher.matches()) {
+            String extractedNumber = matcher.group(2);
+            return Integer.parseInt(extractedNumber) + 1;
+        } else {
+            return MIN_INCREMENTAL_NUMBER;
+        }
+    }
+
+    /**
+     * Ottiene il nome della cartella del backup completo (ad esempio: "Nome (com.x)")
+     * @return il nome della cartella del backup completo
+     */
+    private String getLastCompleteBackupFolderName(){
+        int max_number = MIN_INCREMENTAL_NUMBER;
+        int current;
+
+        File folder = new File(destinationFolderPath);
+        if (folder.exists() && folder.isDirectory()) {
+            File[] destinationFiles = folder.listFiles();
+            if (destinationFiles != null) {
+                for (File destinationFile : destinationFiles) {
+                    if (destinationFile.isDirectory()){
+                        current = getCompleteBackupFolderNumber(destinationFile.getName());
+                        if (current > max_number){
+                            max_number = current;
+                        }
+                    }
+                }
+            }
+        }
+        max_number--;
+        return new File(sourceFolderPath).getName() + " (com." + max_number + ")";
+    }
+
     /********************************************
      * Incremental backup
      *******************************************/
@@ -176,6 +244,10 @@ public class Backup {
         }
     }
 
+    /**
+     * Salva tutti i nomi dei file eliminati in un file a parte
+     * @param completeFolder cartella del backup completo
+     */
     private void startIncrementalDeleted(@NotNull File completeFolder){
         if (completeFolder.isDirectory()) {
             File[] completeFiles = completeFolder.listFiles();
@@ -204,7 +276,7 @@ public class Backup {
     }
 
     /**
-     * Ottiene il nome della cartella del backup incrementale (ad esempio: "Nome (x)")
+     * Ottiene il nome della cartella del backup incrementale (ad esempio: "Nome (inc.x)")
      * @return
      */
     private String getIncrementalBackupFolderName(){
@@ -234,16 +306,26 @@ public class Backup {
      * @return il numero di backup
      */
     private int getIncrementalBackupFolderNumber(String folder){
-        String regex = completeFolderName + "\\s*\\(\\s*(inc\\.(\\d+))\\s*\\)"; // Esempio: "Nome (inc.2)"
+        String f = folder.replace(completeFolderName, "");
+        String regex = "\\s*\\(\\s*(inc\\.(\\d+))\\s*\\)"; // Esempio: "Nome (inc.2)"
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(folder);
+        Matcher matcher = pattern.matcher(f);
+
+        System.out.println(f);
+        System.out.println(regex);
+
         if (matcher.matches()) {
+            System.out.println("Si, qui ci va");
             String extractedNumber = matcher.group(2);
             return Integer.parseInt(extractedNumber) + 1;
         } else {
             return MIN_INCREMENTAL_NUMBER;
         }
     }
+
+
+
+
 
     /**
      * Confronta il nome del file passato come input con i nomi dei file da ignorare
