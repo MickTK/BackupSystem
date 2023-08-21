@@ -20,7 +20,7 @@ public class Backup {
     private String sourceFolderPath;      // Rappresenta la cartella da salvare
     private String destinationFolderPath; // Rappresenta la cartella che conterrà la cartella da salvare
     private String completeFolderName;    // Rappresenta il nome della cartella originale che sarà poi presente nella cartella di destinazione
-    private String incrementalFolderName; // Nome della cartella del backup incrementale
+    private String differentialFolderName; // Nome della cartella del backup incrementale
 
     private File delFile;                 // File che tiene traccia dei file eliminati rispetto al backup completo
     private File completeBackupFolder;    // Cartella del backup completo
@@ -74,28 +74,29 @@ public class Backup {
      * Effettua il backup in base al tipo
      */
     public void start(){
+        String name = new File(sourceFolderPath).getName();
+
         switch (type){
             case Complete:
-                completeFolderName = getCompleteBackupFolderName();
+                completeFolderName = backupNameBuilder(name);
                 new File(Utils.combine(destinationFolderPath, completeFolderName)).mkdir();
                 startComplete(new File(sourceFolderPath));
                 break;
-            case Incremental:
-                completeFolderName = getLastCompleteBackupFolderName();
+            case Differential:
+                completeFolderName = getLatestBackupName(name, BackupType.Complete);
                 completeBackupFolder = new File(Utils.combine(destinationFolderPath, completeFolderName));
                 if (completeBackupFolder.exists() && completeBackupFolder.isDirectory()){
-                    incrementalFolderName = getIncrementalBackupFolderName();
-                    new File(Utils.combine(destinationFolderPath,incrementalFolderName)).mkdir();
-                    startIncremental(new File(sourceFolderPath));
-                    createDelFile();
-                    startIncrementalDeleted(completeBackupFolder);
+                    differentialFolderName = backupNameBuilder(completeFolderName);
+                    new File(Utils.combine(destinationFolderPath, differentialFolderName)).mkdir();
+                    startDifferential(new File(sourceFolderPath));
+                    startDifferentialDeleted(completeBackupFolder);
                 }
                 else {
                     System.out.println("Non esiste nessun backup completo chiamato " + completeFolderName + " all'interno della destinazione.");
                     return;
                 }
                 break;
-            case Differential: break;
+            case Incremental: break;
             default: break;
         }
     }
@@ -132,84 +133,15 @@ public class Backup {
         }
     }
 
-    /**
-     * Ottiene il nome della cartella del backup completo (ad esempio: "Nome (com.x)")
-     * @return il nome della cartella del backup completo
-     */
-    private String getCompleteBackupFolderName(){
-        int max_number = MIN_INCREMENTAL_NUMBER;
-        int current;
-
-        File folder = new File(destinationFolderPath);
-        if (folder.exists() && folder.isDirectory()) {
-            File[] destinationFiles = folder.listFiles();
-            if (destinationFiles != null) {
-                for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
-                        current = getCompleteBackupFolderNumber(destinationFile.getName());
-                        if (current > max_number){
-                            max_number = current;
-                        }
-                    }
-                }
-            }
-        }
-        return new File(sourceFolderPath).getName() + " (com." + max_number + ")";
-    }
-
-    /**
-     * Cerca e restituisce il numero di backup (completo) nel nome della cartella
-     * @param folder nome della cartella
-     * @return il numero di backup
-     */
-    private int getCompleteBackupFolderNumber(String folder){
-        String regex = new File(sourceFolderPath).getName() + "\\s*\\(\\s*(com\\.(\\d+))\\s*\\)"; // Esempio: "Nome (com.1)"
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(folder);
-        if (matcher.matches()) {
-            String extractedNumber = matcher.group(2);
-            return Integer.parseInt(extractedNumber) + 1;
-        } else {
-            return MIN_INCREMENTAL_NUMBER;
-        }
-    }
-
-    /**
-     * Ottiene il nome della cartella del backup completo (ad esempio: "Nome (com.x)")
-     * @return il nome della cartella del backup completo
-     */
-    private String getLastCompleteBackupFolderName(){
-        int max_number = MIN_INCREMENTAL_NUMBER;
-        int current;
-
-        File folder = new File(destinationFolderPath);
-        if (folder.exists() && folder.isDirectory()) {
-            File[] destinationFiles = folder.listFiles();
-            if (destinationFiles != null) {
-                for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
-                        current = getCompleteBackupFolderNumber(destinationFile.getName());
-                        if (current > max_number){
-                            max_number = current;
-                        }
-                    }
-                }
-            }
-        }
-        max_number--;
-        return new File(sourceFolderPath).getName() + " (com." + max_number + ")";
-    }
-
     /********************************************
-     * Incremental backup
+     * Differential backup
      *******************************************/
 
-
     /**
-     * Effettua un backup incrementale
+     * Effettua un backup differenziale
      * @param sourceFolder
      */
-    private void startIncremental(@NotNull File sourceFolder) {
+    private void startDifferential(@NotNull File sourceFolder) {
         if (sourceFolder.isDirectory()) {
             File[] sourceFiles = sourceFolder.listFiles();
             if (sourceFiles != null) {
@@ -221,7 +153,7 @@ public class Backup {
                             sourceFolderPath, completeBackupFolder.getAbsolutePath()
                     ));
                     File destinationFile = new File(sourceFile.getAbsolutePath().replace(
-                            sourceFolderPath, Utils.combine(destinationFolderPath,incrementalFolderName)
+                            sourceFolderPath, Utils.combine(destinationFolderPath, differentialFolderName)
                     ));
 
                     /* File creati/modificati */
@@ -235,7 +167,7 @@ public class Backup {
                             }
                         }
                         else if (sourceFile.isDirectory()){
-                            startIncremental(sourceFile);
+                            startDifferential(sourceFile);
                         }
                     }
                     catch (Exception e){e.printStackTrace();}
@@ -248,7 +180,7 @@ public class Backup {
      * Salva tutti i nomi dei file eliminati in un file a parte
      * @param completeFolder cartella del backup completo
      */
-    private void startIncrementalDeleted(@NotNull File completeFolder){
+    private void startDifferentialDeleted(@NotNull File completeFolder){
         if (completeFolder.isDirectory()) {
             File[] completeFiles = completeFolder.listFiles();
             if (completeFiles != null) {
@@ -263,69 +195,168 @@ public class Backup {
                     // Se il file è stato rimosso
                     if (!sourceFile.exists()){
                         // Aggiunge il file rimosso alla lista dei file rimossi
+                        createDelFile();
                         writeOnDelFile(completeFile);
                     }
                     // Se il file non è stato rimosso ed è una cartella
                     else if (completeFile.isDirectory()){
                         // Itera sul contenuto della cartella
-                        startIncrementalDeleted(completeFile);
+                        startDifferentialDeleted(completeFile);
                     }
                 }
             }
         }
     }
 
-    /**
-     * Ottiene il nome della cartella del backup incrementale (ad esempio: "Nome (inc.x)")
-     * @return
-     */
-    private String getIncrementalBackupFolderName(){
-        int max_number = MIN_INCREMENTAL_NUMBER;
-        int current;
+    /* Backup name */
+    private String backupNameBuilder(String name){
+        int completeVersion;
+        int differentialVersion;
+        int incrementalVersion;
 
+        switch (type){
+            case Complete:
+                completeVersion = getLatestCompleteBackupVersion() + 1;
+                differentialVersion = 0;
+                incrementalVersion = 0;
+                break;
+            case Differential:
+                completeVersion = getLatestCompleteBackupVersion();
+                differentialVersion = getLatestDifferentialBackupVersion(completeVersion) + 1;
+                incrementalVersion = 0;
+                break;
+            case Incremental:
+                completeVersion = getLatestCompleteBackupVersion();
+                differentialVersion = 0;
+                incrementalVersion = getLatestIncrementalBackupVersion(completeVersion) + 1;
+                break;
+            default:
+                throw new ExceptionInInitializerError("Attribute \"type\" is null.");
+        }
+
+        return String.format("%s (b.%d.%d.%d)", getBackupName(name), completeVersion, differentialVersion, incrementalVersion);
+    }
+    private String getBackupName(String input){
+        String regex = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Esempio: "Nome backup (b.1.2.3)"
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            return matcher.group(1);
+        }
+        return input;
+    }
+    private int getBackupVersion(String input, BackupType backupType){
+        String regex = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Esempio: "Nome backup (b.1.2.3)"
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            // String genericName = matcher.group(1);
+            switch(backupType){
+                case Complete: return Integer.parseInt(matcher.group(2));     // Numero di backup completo (primo valore numerico)
+                case Differential: return Integer.parseInt(matcher.group(3)); // Numero di backup differenziale (secondo valore numerico)
+                case Incremental: return Integer.parseInt(matcher.group(4));  // Numero di backup incrementale (terzo valore numerico)
+                default: break;
+            }
+        } else { System.out.println("La stringa non segue il formato corretto."); }
+        return -1;
+    }
+    private int getLatestCompleteBackupVersion(){
+        int version = 0; // Minimum version
+        int current;
         File folder = new File(destinationFolderPath);
+
         if (folder.exists() && folder.isDirectory()) {
             File[] destinationFiles = folder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
                     if (destinationFile.isDirectory()){
-                        current = getIncrementalBackupFolderNumber(destinationFile.getName());
-                        if (current > max_number){
-                            max_number = current;
+                        current = getBackupVersion(destinationFile.getName(), BackupType.Complete);
+                        if (current > version){
+                            version = current;
                         }
                     }
                 }
             }
         }
-        return completeFolderName + " (inc." + max_number + ")";
+        return version;
     }
+    private int getLatestDifferentialBackupVersion(int completeVersion){
+        int version = 0; // Minimum version
+        int current;
+        File folder = new File(destinationFolderPath);
 
-    /**
-     * Cerca e restituisce il numero di backup (incrementale) nel nome della cartella
-     * @param folder nome della cartella
-     * @return il numero di backup
-     */
-    private int getIncrementalBackupFolderNumber(String folder){
-        String f = folder.replace(completeFolderName, "");
-        String regex = "\\s*\\(\\s*(inc\\.(\\d+))\\s*\\)"; // Esempio: "Nome (inc.2)"
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(f);
-
-        System.out.println(f);
-        System.out.println(regex);
-
-        if (matcher.matches()) {
-            System.out.println("Si, qui ci va");
-            String extractedNumber = matcher.group(2);
-            return Integer.parseInt(extractedNumber) + 1;
-        } else {
-            return MIN_INCREMENTAL_NUMBER;
+        if (folder.exists() && folder.isDirectory()) {
+            File[] destinationFiles = folder.listFiles();
+            if (destinationFiles != null) {
+                for (File destinationFile : destinationFiles) {
+                    if (destinationFile.isDirectory()){
+                        if (getBackupVersion(destinationFile.getName(), BackupType.Complete) == completeVersion){
+                            current = getBackupVersion(destinationFile.getName(), BackupType.Differential);
+                            if (current > version){
+                                version = current;
+                            }
+                        }
+                    }
+                }
+            }
         }
+        return version;
+    }
+    private int getLatestIncrementalBackupVersion(int completeVersion){
+        int version = 0; // Minimum version
+        int current;
+        File folder = new File(destinationFolderPath);
+
+        if (folder.exists() && folder.isDirectory()) {
+            File[] destinationFiles = folder.listFiles();
+            if (destinationFiles != null) {
+                for (File destinationFile : destinationFiles) {
+                    if (destinationFile.isDirectory()){
+                        if (getBackupVersion(destinationFile.getName(), BackupType.Complete) == completeVersion){
+                            current = getBackupVersion(destinationFile.getName(), BackupType.Incremental);
+                            if (current > version){
+                                version = current;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return version;
     }
 
+    private String getLatestBackupName(String name, BackupType backupType){
+        int completeVersion;
+        int differentialVersion;
+        int incrementalVersion;
 
+        switch (backupType){
+            case Complete:
+                completeVersion = getLatestCompleteBackupVersion();
+                differentialVersion = 0;
+                incrementalVersion = 0;
+                break;
+            case Differential:
+                completeVersion = getLatestCompleteBackupVersion();
+                differentialVersion = getLatestDifferentialBackupVersion(completeVersion);
+                incrementalVersion = 0;
+                break;
+            case Incremental:
+                completeVersion = getLatestCompleteBackupVersion();
+                differentialVersion = 0;
+                incrementalVersion = getLatestIncrementalBackupVersion(completeVersion);
+                break;
+            default:
+                throw new ExceptionInInitializerError("Attribute \"type\" is null.");
+        }
 
-
+        if (completeVersion < 1)
+            return null;
+        else
+            return String.format("%s (b.%d.%d.%d)", name, completeVersion, differentialVersion, incrementalVersion);
+    }
 
     /**
      * Confronta il nome del file passato come input con i nomi dei file da ignorare
@@ -340,9 +371,10 @@ public class Backup {
     private void createDelFile(){
         try {
             delFile = new File(Utils.combine(
-                    destinationFolderPath, incrementalFolderName, DELETED_FILES_FILE_NAME)
+                    destinationFolderPath, differentialFolderName, DELETED_FILES_FILE_NAME)
             );
-            delFile.createNewFile();
+            if (!delFile.exists())
+                delFile.createNewFile();
         }
         catch(Exception e){e.printStackTrace();}
     }
