@@ -78,7 +78,7 @@ public class Backup {
                             backupNameBuilder(temp))
                     );
                     if (backupFolder.mkdir()){
-                        startIncremental(new File(sourceFolder.getAbsolutePath()));
+                        startIncremental(sourceFolder);
                         startIncrementalDeleted(previousBackupFolder);
                     }
                 }
@@ -358,39 +358,37 @@ public class Backup {
     /**/
     /**
      * Effettua un backup incrementale
-     * @param sourceFolder
+     * @param folder
      */
-    private void startIncremental(@NotNull File sourceFolder) {
-        if (sourceFolder.isDirectory()) {
-            File[] sourceFiles = sourceFolder.listFiles();
-            if (sourceFiles != null) {
-                for (File sourceFile : sourceFiles) {
-                    if (isIgnored(sourceFile)) continue;
+    private void startIncremental(@NotNull File folder) {
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (isIgnored(file)) continue;
 
-                    // Cerchiamo il file nella cartella del backup completo
-                    File completeFile = new File(sourceFile.getAbsolutePath().replace(
-                            sourceFolder.getAbsolutePath(), previousBackupFolder.getAbsolutePath()
-                    ));
-                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
+                    // Cerchiamo il file nella cartella dell'ultimo backup
+                    File previousFile = new File(file.getAbsolutePath().replace(
                         sourceFolder.getAbsolutePath(),
-                        Utils.combine(
-                            destinationFolder.getAbsolutePath(),
-                            backupFolder.getName()
-                        )
+                        previousBackupFolder.getAbsolutePath()
+                    ));
+                    File destinationFile = new File(file.getAbsolutePath().replace(
+                        sourceFolder.getAbsolutePath(),
+                        backupFolder.getAbsolutePath()
                     ));
 
                     /* File creati/modificati */
                     try {
-                        if (sourceFile.isFile()){
+                        if (file.isFile()){
                             // Se il file è stato creato/modificato
-                            if (completeFile.exists() && Utils.lastModifiedDateCompare(sourceFile, previousBackupFolder) < 0){
+                            if (Utils.lastModifiedDateCompare(file, previousBackupFolder) < 0){
                                 if(!destinationFile.getParentFile().exists())
                                     destinationFile.getParentFile().mkdirs();
-                                Files.copy(sourceFile.toPath(), destinationFile.toPath());
+                                Files.copy(file.toPath(), destinationFile.toPath());
                             }
                         }
-                        else if (sourceFile.isDirectory()){
-                            startIncremental(sourceFile);
+                        else if (file.isDirectory()){
+                            startIncremental(file);
                         }
                     }
                     catch (Exception e){e.printStackTrace();}

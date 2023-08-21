@@ -78,7 +78,7 @@ public class Controller {
                 backup = new Backup(
                     source.getAbsolutePath(),
                     destination.getAbsolutePath(),
-                    BackupType.Differential
+                    BackupType.Incremental
                 );
                 backup.start();
             }
