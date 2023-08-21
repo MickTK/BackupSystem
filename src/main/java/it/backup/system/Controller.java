@@ -68,7 +68,8 @@ public class Controller {
 
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
 
-            log("Backup completo in corso.");
+            consoleLog.setText("");
+            log("Backup in corso.");
             log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
             log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
 
@@ -76,7 +77,7 @@ public class Controller {
             new Backup(
                     source.getAbsolutePath(),
                     destination.getAbsolutePath(),
-                    BackupType.Incremental
+                    BackupType.Differential
             ).start();
             Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
 
