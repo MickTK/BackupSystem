@@ -18,10 +18,9 @@ public class Controller {
     @FXML private TextField destinationInput;
     @FXML private TextArea consoleLog;
 
+    Backup backup;
     private File source;
     private File destination;
-
-    private String completeBackupPath;
 
     @FXML
     private void selectSourcePath(ActionEvent event){
@@ -74,11 +73,16 @@ public class Controller {
             log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
 
             long lastDeltaTime = System.nanoTime();
-            new Backup(
+
+            try {
+                backup = new Backup(
                     source.getAbsolutePath(),
                     destination.getAbsolutePath(),
                     BackupType.Differential
-            ).start();
+                );
+                backup.start();
+            }
+            catch (Exception e) { e.printStackTrace(); }
             Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
 
             log("Backup completato in " + deltaTime.toString() + " secondi.");
