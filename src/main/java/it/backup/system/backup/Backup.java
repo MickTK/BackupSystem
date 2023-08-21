@@ -65,6 +65,8 @@ public class Backup {
                     if (backupFolder.mkdir()){
                         startDifferential(new File(sourceFolder.getAbsolutePath()));
                         startDifferentialDeleted(previousBackupFolder);
+                        if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
+                            backupFolder.delete();
                     }
                 }
                 else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
@@ -80,6 +82,8 @@ public class Backup {
                     if (backupFolder.mkdir()){
                         startIncremental(sourceFolder);
                         startIncrementalDeleted(previousBackupFolder);
+                        if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
+                            backupFolder.delete();
                     }
                 }
                 else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
