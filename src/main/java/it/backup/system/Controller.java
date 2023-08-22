@@ -5,6 +5,8 @@ import it.backup.system.backup.BackupType;
 import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
@@ -14,15 +16,49 @@ import java.io.File;
 
 public class Controller {
 
+    // Text fields
     @FXML private TextField sourceInput;
     @FXML private TextField destinationInput;
     @FXML private TextArea consoleLog;
+
+    // Buttons
+    @FXML private RadioButton completeButton;
+    @FXML private RadioButton differentialButton;
+    @FXML private RadioButton incrementalButton;
+    @FXML private Button chooseSourcePath;
+    @FXML private Button chooseDestinationPath;
+    @FXML private Button processButton;
 
     Backup backup;
     private File source;
     private File destination;
 
-    @FXML
+    /**
+     * Inizializza il controller
+     */
+    public void initialize() {
+        completeButton.setOnAction(event -> {
+            differentialButton.setSelected(false);
+            incrementalButton.setSelected(false);
+        });
+        differentialButton.setOnAction(event -> {
+            completeButton.setSelected(false);
+            incrementalButton.setSelected(false);
+        });
+        incrementalButton.setOnAction(event -> {
+            differentialButton.setSelected(false);
+            completeButton.setSelected(false);
+        });
+        chooseSourcePath.setOnAction(this::selectSourcePath);
+        chooseSourcePath.requestFocus();
+        chooseDestinationPath.setOnAction(this::selectDestinationPath);
+        processButton.setOnAction(this::process);
+    }
+
+    /**
+     * Recupera e salva il percorso della cartella da salvare
+     * @param event
+     */
     private void selectSourcePath(ActionEvent event){
         Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
@@ -40,7 +76,10 @@ public class Controller {
         }
     }
 
-    @FXML
+    /**
+     * Recupera e salva il percorso della cartella di destinazione
+     * @param event
+     */
     private void selectDestinationPath(ActionEvent event) {
         Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 
@@ -58,37 +97,50 @@ public class Controller {
         }
     }
 
-    @FXML
+    /**
+     * Inizia il processo di backup
+     * @param event
+     */
     private void process(ActionEvent event){
+        BackupType backupType;
+        if (differentialButton.isSelected())
+            backupType = BackupType.Differential;
+        else if (incrementalButton.isSelected())
+            backupType = BackupType.Incremental;
+        else
+            backupType = BackupType.Complete;
+
         if (Application.DEBUG){
             source = new File("/home/michele/Desktop/Da");
             destination = new File("/home/michele/Desktop/A");
         }
 
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
-
-            consoleLog.setText("");
-            log("Backup in corso.");
-            log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
-            log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
-
-            long lastDeltaTime = System.nanoTime();
-
             try {
                 backup = new Backup(
                     source.getAbsolutePath(),
                     destination.getAbsolutePath(),
-                    BackupType.Incremental
+                    backupType
                 );
+
+                consoleLog.setText("");
+                log("Backup in corso.");
+                log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
+                log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
+
+                long lastDeltaTime = System.nanoTime();
                 backup.start();
+                long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
+                log("Backup completato in " + deltaTime + " secondi.");
             }
             catch (Exception e) { e.printStackTrace(); }
-            Long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
-
-            log("Backup completato in " + deltaTime.toString() + " secondi.");
         }
     }
 
+    /**
+     * Aggiunge del testo in coda al campo di log
+     * @param text testo da aggiungere
+     */
     private void log(String text){
         Utils.addLog(consoleLog, text);
     }

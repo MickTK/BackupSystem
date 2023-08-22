@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Backup {
 
     /* Macros */
-    private final String DELETED_FILES_FILE_NAME = "_deleted_._files_"; // Nome del file che tiene traccia dei file eliminati
+    public final String DELETED_FILES_FILE_NAME = "_deleted_._files_"; // Nome del file che tiene traccia dei file eliminati
 
     /* Attributes */
     private BackupType backupType; // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
@@ -38,6 +38,10 @@ public class Backup {
         if (!destinationFolder.exists() || !destinationFolder.isDirectory())
             throw new Exception(destinationFolderPath + " does not exists or it is not a directory.");
         this.backupType = type;
+    }
+
+    public File getBackupFolder() {
+        return backupFolder;
     }
 
     /* Backup */
@@ -84,7 +88,6 @@ public class Backup {
                     );
                     if (backupFolder.mkdir()){
                         startIncremental(sourceFolder);
-                        startIncrementalDeleted(previousBackupFolder);
                         if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
                             backupFolder.delete();
                     }
@@ -185,7 +188,6 @@ public class Backup {
                         previousBackupFolder.getAbsolutePath(),
                         sourceFolder.getAbsolutePath()
                     ));
-                    System.out.println(sourceFile.getAbsolutePath());
                     // Se il file è stato rimosso
                     if (!sourceFile.exists()){
                         // Aggiunge il file rimosso alla lista dei file rimossi
@@ -245,48 +247,11 @@ public class Backup {
         }
     }
 
-    /**
-     * Salva tutti i nomi dei file eliminati in un file (il metodo è ricorsivo)
-     * @param completeFolder cartella corrente
-     */
-    private void startIncrementalDeleted(@NotNull File completeFolder){
-        if (completeFolder.isDirectory()) {
-            File[] completeFiles = completeFolder.listFiles();
-            if (completeFiles != null) {
-                for (File completeFile : completeFiles) {
-                    if (isIgnored(completeFile)) continue;
-
-                    // Viene cercato il file nella cartella sorgente
-                    File sourceFile = new File(completeFile.getAbsolutePath().replace(
-                            Utils.combine(
-                                    destinationFolder.getAbsolutePath(),
-                                    backupFolder.getName()
-                            ),
-                            sourceFolder.getAbsolutePath()
-                    ));
-
-                    // Se il file è stato rimosso
-                    if (!sourceFile.exists()){
-                        // Aggiunge il file rimosso alla lista dei file rimossi
-                        createDeletedFilesFile();
-                        writeOnDeletedFilesFile(completeFile);
-                    }
-                    // Se il file non è stato rimosso ed è una cartella
-                    else if (completeFile.isDirectory()){
-                        // Itera sul contenuto della cartella
-                        startIncrementalDeleted(completeFile);
-                    }
-                }
-            }
-        }
-    }
-
     /* Deleted files file */
 
     private void createDeletedFilesFile(){
         try {
             deletedFilesFile = new File(Utils.combine(backupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
-            System.out.println(deletedFilesFile.getAbsolutePath());
             if (!deletedFilesFile.exists())
                 deletedFilesFile.createNewFile();
         }
