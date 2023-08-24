@@ -132,6 +132,8 @@ public class Controller {
                 backup.start();
                 long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
                 log("Backup completato in " + deltaTime + " secondi.");
+
+                //backup.createZip(false);
             }
             catch (Exception e) { e.printStackTrace(); }
         }

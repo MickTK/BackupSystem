@@ -4,10 +4,15 @@ import it.backup.system.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Backup {
 
@@ -23,6 +28,9 @@ public class Backup {
     private File destinationFolder;    // Cartella di destinazione
     private File deletedFilesFile;     // File che tiene traccia dei file eliminati rispetto al backup completo
 
+    private boolean createZip;
+    private boolean previousBackupFolderIsZip;
+
     /**
      * Costruttore
      * @param sourceFolderPath cartella da salvare
@@ -37,6 +45,9 @@ public class Backup {
         this.destinationFolder = new File(destinationFolderPath);
         if (!destinationFolder.exists() || !destinationFolder.isDirectory())
             throw new Exception(destinationFolderPath + " does not exists or it is not a directory.");
+        this.backupFolder = null;
+        this.previousBackupFolder = null;
+        this.deletedFilesFile = null;
         this.backupType = type;
     }
 
@@ -464,5 +475,48 @@ public class Backup {
      */
     private boolean isIgnored(@NotNull File file){
         return file.getName().equals(DELETED_FILES_FILE_NAME);
+    }
+
+
+    /**
+     * Crea un file compresso della cartella sorgente nella cartella di destinazione
+     */
+    public void createZip(boolean deleteDecompressedFolder){
+        if (!backupFolder.exists()) return;
+        String zipFilePath = backupFolder.getAbsolutePath() + ".zip";
+        try (FileOutputStream fos = new FileOutputStream(zipFilePath)) {
+            try (ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+                zipDirectory(backupFolder, backupFolder.getName(), zipOut);
+                if (deleteDecompressedFolder) backupFolder.delete();
+            } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    /**
+     * Comprime le cartelle e le sotto-cartelle
+     * @param folder
+     * @param parentFolder
+     * @param zipOut
+     * @throws IOException
+     */
+    private static void zipDirectory(File folder, String parentFolder, ZipOutputStream zipOut) throws IOException {
+        File[] files = folder.listFiles();
+        byte[] buffer = new byte[1024];
+
+        if (files == null) return;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                zipDirectory(file, parentFolder + "/" + file.getName(), zipOut);
+            }
+            else {
+                try(FileInputStream fis = new FileInputStream(file)) {
+                    zipOut.putNextEntry(new ZipEntry(parentFolder + "/" + file.getName()));
+
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        zipOut.write(buffer, 0, length);
+                    }
+                }
+            }
+        }
     }
 }

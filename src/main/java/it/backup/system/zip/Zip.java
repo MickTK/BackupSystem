@@ -1,55 +1,49 @@
 package it.backup.system.zip;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.zip.ZipFile;
 
 public class Zip {
 
-    /**
-     * Crea un file compresso della cartella sorgente nella cartella di destinazione
-     * @param source
-     * @param destination
-     */
-    public static void createZip(File source, File destination){
-        String zipFilePath = destination.getAbsolutePath() + "/" + source.getName() + ".zip";
+    private ZipFile zipFile;
 
-        try (FileOutputStream fos = new FileOutputStream(zipFilePath)) {
-            try (ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-                zipDirectory(source, source.getName(), zipOut);
-            } catch (IOException e) { e.printStackTrace(); }
-        } catch (IOException e) { e.printStackTrace(); }
+    public Zip(String path) {
+        try {
+            zipFile = new ZipFile(path);
+        }
+        catch (Exception e) { zipFile = null; }
     }
 
-    /**
-     * Comprime le cartelle e le sotto-cartelle
-     * @param folder
-     * @param parentFolder
-     * @param zipOut
-     * @throws IOException
-     */
-    public static void zipDirectory(File folder, String parentFolder, ZipOutputStream zipOut) throws IOException {
-        File[] files = folder.listFiles();
-        byte[] buffer = new byte[1024];
+    public ZipEntry getEntry(String relativePathToFile) {
+        return zipFile.getEntry(relativePathToFile);
+    }
 
-        if (files == null) return;
-        for (File file : files) {
-            if (file.isDirectory()) {
-                zipDirectory(file, parentFolder + "/" + file.getName(), zipOut);
-            }
-            else {
-                try(FileInputStream fis = new FileInputStream(file)) {
-                    zipOut.putNextEntry(new ZipEntry(parentFolder + "/" + file.getName()));
-
-                    int length;
-                    while ((length = fis.read(buffer)) > 0) {
-                        zipOut.write(buffer, 0, length);
-                    }
+    public void extractEntry(ZipEntry zipEntry, String filename) {
+        if (zipEntry != null)
+            try (InputStream inputStream = zipFile.getInputStream(zipEntry);
+                 OutputStream outputStream = new FileOutputStream(filename)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
                 }
-            }
-        }
+
+                System.out.println("File extracted successfully.");
+            } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    /*public long getLastModifiedTime(String relativePathToFile) throws Exception {
+        ZipEntry entry = zipFile.getEntry(relativePathToFile);
+        long lastModifiedTimestamp;
+        if (entry != null) {
+            lastModifiedTimestamp = entry.getTime();
+            System.out.println("Last Modified Time: " + lastModifiedTimestamp);
+        } else { throw new Exception("File " + relativePathToFile + " not found in the zip archive."); }
+        return lastModifiedTimestamp;
+    }*/
+
+    public static boolean isZip(File file) {
+        return file.getName().endsWith(".zip");
     }
 }
