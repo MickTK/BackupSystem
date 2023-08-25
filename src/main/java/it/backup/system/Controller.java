@@ -111,8 +111,8 @@ public class Controller {
             backupType = BackupType.Complete;
 
         if (Application.DEBUG){
-            source = new File("/home/michele/Desktop/Da");
-            destination = new File("/home/michele/Desktop/A");
+            source = new File("/home/michele/Desktop/Cartella da salvare");
+            destination = new File("/home/michele/Desktop/Destinazione");
         }
 
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
@@ -133,7 +133,7 @@ public class Controller {
                 long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
                 log("Backup completato in " + deltaTime + " secondi.");
 
-                //backup.createZip(false);
+                backup.createZip(true);
             }
             catch (Exception e) { e.printStackTrace(); }
         }

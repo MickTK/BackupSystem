@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Application extends javafx.application.Application {
 
-    static public final boolean DEBUG = false;
+    static public final boolean DEBUG = true;
 
     @Override
     public void start(Stage stage) throws IOException {

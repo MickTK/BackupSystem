@@ -1,6 +1,7 @@
 package it.backup.system.backup;
 
 import it.backup.system.utils.Utils;
+import it.backup.system.zip.Zip;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -18,6 +19,8 @@ public class Backup {
 
     /* Macros */
     public final String DELETED_FILES_FILE_NAME = "_deleted_._files_"; // Nome del file che tiene traccia dei file eliminati
+    // "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Espressione regolare senza .zip
+    public final String REGEX = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)(\\.zip)?"; // Esempio: "Nome backup (b.1.2.3)"
 
     /* Attributes */
     private BackupType backupType; // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
@@ -28,8 +31,8 @@ public class Backup {
     private File destinationFolder;    // Cartella di destinazione
     private File deletedFilesFile;     // File che tiene traccia dei file eliminati rispetto al backup completo
 
-    private boolean createZip;
-    private boolean previousBackupFolderIsZip;
+    private boolean previousBackupFolderIsZip = false;
+    private Zip previousBackupFolderZip;
 
     /**
      * Costruttore
@@ -74,20 +77,40 @@ public class Backup {
                 break;
             case Differential:
                 temp = getLatestBackupName(sourceFolder.getName(), BackupType.Complete);
-                previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
-                if (previousBackupFolder.exists() && previousBackupFolder.isDirectory()){
-                    backupFolder = new File(Utils.combine(
-                        destinationFolder.getAbsolutePath(),
-                        backupNameBuilder(temp))
-                    );
-                    if (backupFolder.mkdir()){
-                        startDifferential(new File(sourceFolder.getAbsolutePath()));
-                        startDifferentialDeleted(previousBackupFolder);
-                        if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
-                            backupFolder.delete();
+                if (!previousBackupFolderIsZip)
+                    previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
+                else
+                    previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp + ".zip"));
+                if (previousBackupFolder.exists()){
+                    if (previousBackupFolder.isDirectory()) {
+                        backupFolder = new File(Utils.combine(
+                                destinationFolder.getAbsolutePath(),
+                                backupNameBuilder(temp))
+                        );
+                        if (backupFolder.mkdir()) {
+                            startDifferential(new File(sourceFolder.getAbsolutePath()));
+                            startDifferentialDeleted(previousBackupFolder);
+                            if (Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
+                                backupFolder.delete();
+                        }
                     }
+                    else if (Zip.isZip(previousBackupFolder)) {
+                        if (Zip.isZip(previousBackupFolder))
+                            previousBackupFolderZip = new Zip(previousBackupFolder.getAbsolutePath());
+                        backupFolder = new File(Utils.combine(
+                                destinationFolder.getAbsolutePath(),
+                                backupNameBuilder(temp))
+                        );
+                        if (backupFolder.mkdir()) {
+                            startDifferentialZip(new File(sourceFolder.getAbsolutePath()));
+                            //startDifferentialDeleted(previousBackupFolder);
+                            if (Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
+                                backupFolder.delete();
+                        }
+                    }
+                    else { throw new Exception(previousBackupFolder + " is not a directory."); }
                 }
-                else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
+                else { throw new Exception(previousBackupFolder + " does not exists."); }
                 break;
             case Incremental:
                 temp = getLatestBackupName(sourceFolder.getName(), BackupType.Incremental);
@@ -152,8 +175,7 @@ public class Backup {
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
                     if (isIgnored(sourceFile)) continue;
-
-                    // Cerchiamo il file nella cartella del backup completo
+                    // Cerchiamo il file nella cartella dell'ultimo backup effettuato
                     File previousFile = new File(sourceFile.getAbsolutePath().replace(
                         sourceFolder.getAbsolutePath(),
                         previousBackupFolder.getAbsolutePath()
@@ -210,6 +232,47 @@ public class Backup {
                         // Itera sul contenuto della cartella
                         startDifferentialDeleted(file);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Effettua un backup differenziale (il metodo è ricorsivo)
+     * @param folder cartella corrente
+     */
+    private void startDifferentialZip(@NotNull File folder) {
+        if (folder.isDirectory()) {
+            File[] sourceFiles = folder.listFiles();
+            if (sourceFiles != null) {
+                for (File sourceFile : sourceFiles) {
+                    if (isIgnored(sourceFile)) continue;
+                    // Cerchiamo il file nella cartella dell'ultimo backup effettuato
+                    ZipEntry previousFile = previousBackupFolderZip.getEntry(
+                            sourceFile.getAbsolutePath().replace(
+                                    sourceFolder.getAbsolutePath(),
+                                    previousBackupFolder.getName().replace(".zip",""))
+                    );
+                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
+                            sourceFolder.getAbsolutePath(),
+                            backupFolder.getAbsolutePath()
+                    ));
+
+                    /* File creati/modificati */
+                    try {
+                        if (sourceFile.isFile()){
+                            // Se il file è stato creato/modificato
+                            if (previousFile == null || previousFile.getTime() < sourceFile.lastModified()){
+                                if(!destinationFile.getParentFile().exists())
+                                    destinationFile.getParentFile().mkdirs();
+                                Files.copy(sourceFile.toPath(), destinationFile.toPath());
+                            }
+                        }
+                        else if (sourceFile.isDirectory()){
+                            startDifferentialZip(sourceFile);
+                        }
+                    }
+                    catch (Exception e){e.printStackTrace();}
                 }
             }
         }
@@ -321,11 +384,12 @@ public class Backup {
      * @return nome del backup (senza versione)
      */
     private String getBackupName(String name){
-        String regex = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Esempio: "Nome backup (b.1.2.3)"
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(name);
 
         if (matcher.matches()) {
+            if (name.endsWith(".zip"))
+                previousBackupFolderIsZip = true;
             return matcher.group(1);
         }
         return name;
@@ -338,12 +402,10 @@ public class Backup {
      * @return numero di versione
      */
     private int getBackupVersion(String name, BackupType backupType){
-        String regex = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Esempio: "Nome backup (b.1.2.3)"
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(name);
 
         if (matcher.matches()) {
-            // String genericName = matcher.group(1);
             switch(backupType){
                 case Complete: return Integer.parseInt(matcher.group(2));     // Numero di backup completo (primo valore numerico)
                 case Differential: return Integer.parseInt(matcher.group(3)); // Numero di backup differenziale (secondo valore numerico)
@@ -365,7 +427,8 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
+                    if (destinationFile.isDirectory() || Zip.isZip(destinationFile)){
+                        previousBackupFolderIsZip = Zip.isZip(destinationFile);
                         current = getBackupVersion(destinationFile.getName(), BackupType.Complete);
                         if (current > version){
                             version = current;
@@ -390,7 +453,8 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
+                    if (destinationFile.isDirectory() || Zip.isZip(destinationFile)){
+                        previousBackupFolderIsZip = Zip.isZip(destinationFile);
                         if (getBackupVersion(destinationFile.getName(), BackupType.Complete) == completeVersion){
                             current = getBackupVersion(destinationFile.getName(), BackupType.Differential);
                             if (current > version){
@@ -480,6 +544,7 @@ public class Backup {
 
     /**
      * Crea un file compresso della cartella sorgente nella cartella di destinazione
+     * @param deleteDecompressedFolder se la cartella originale decompressa deve essere eliminata
      */
     public void createZip(boolean deleteDecompressedFolder){
         if (!backupFolder.exists()) return;
@@ -491,6 +556,10 @@ public class Backup {
             } catch (IOException e) { e.printStackTrace(); }
         } catch (IOException e) { e.printStackTrace(); }
     }
+    public void createZip(){
+        createZip(false);
+    }
+
     /**
      * Comprime le cartelle e le sotto-cartelle
      * @param folder

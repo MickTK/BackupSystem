@@ -6,6 +6,8 @@ import java.util.zip.ZipFile;
 
 public class Zip {
 
+    private final String EXTENSION = ".zip";
+
     private ZipFile zipFile;
 
     /**
