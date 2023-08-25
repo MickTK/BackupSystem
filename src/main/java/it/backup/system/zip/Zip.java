@@ -8,6 +8,10 @@ public class Zip {
 
     private ZipFile zipFile;
 
+    /**
+     * Costruttore
+     * @param path percorso della cartella compressa
+     */
     public Zip(String path) {
         try {
             zipFile = new ZipFile(path);
@@ -15,10 +19,20 @@ public class Zip {
         catch (Exception e) { zipFile = null; }
     }
 
+    /**
+     * File compresso presente nella cartella compressa
+     * @param relativePathToFile percorso relativo del file compresso (dentro la cartella compressa)
+     * @return
+     */
     public ZipEntry getEntry(String relativePathToFile) {
         return zipFile.getEntry(relativePathToFile);
     }
 
+    /**
+     * Estrae un file dalla cartella compressa
+     * @param zipEntry file da estrarre
+     * @param filename percorso assoluto (con nome) del file estratto
+     */
     public void extractEntry(ZipEntry zipEntry, String filename) {
         if (zipEntry != null)
             try (InputStream inputStream = zipFile.getInputStream(zipEntry);
@@ -43,6 +57,11 @@ public class Zip {
         return lastModifiedTimestamp;
     }*/
 
+    /**
+     * Controlla se un dato file è un file (cartella) compresso
+     * @param file file da controllare
+     * @return true se il file è compresso, altrimenti false
+     */
     public static boolean isZip(File file) {
         return file.getName().endsWith(".zip");
     }

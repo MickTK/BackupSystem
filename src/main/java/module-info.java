@@ -1,4 +1,4 @@
-module com.example.backupsystem {
+module it.backup.system {
     requires javafx.controls;
     requires javafx.fxml;
 

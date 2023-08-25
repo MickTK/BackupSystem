@@ -1,7 +1,18 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="BackupSystem:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/BackupSystem_jar</output-path>
-    <root id="archive" name="BackupSystem.jar">
+  <artifact type="javafx" name="BackupSystem:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Application_jar/Application.jar</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="it.backup.system.Application" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="exe" />
+        <option name="title" value="Backup System" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
       <element id="module-output" name="BackupSystem" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/17.0.6/javafx-controls-17.0.6-linux.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-base/17.0.6/javafx-base-17.0.6-linux.jar" path-in-jar="/" />
