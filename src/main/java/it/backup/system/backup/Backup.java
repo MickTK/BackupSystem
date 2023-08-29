@@ -30,9 +30,6 @@ public class Backup {
     private File destinationFolder;    // Cartella di destinazione
     private File deletedFilesFile;     // File che tiene traccia dei file eliminati rispetto al backup completo
 
-    //private boolean previousBackupFolderIsZip = false;
-    //private Zip previousBackupFolderZip;
-
     /**
      * Costruttore
      * @param sourceFolderPath cartella da salvare
@@ -278,10 +275,10 @@ public class Backup {
         }
     }
 
-
-
-
-
+    /**
+     * Ottiene i file eliminati da salvare con il backup incrementale corrente
+     * @return lista di nomi di file (percorso relativo)
+     */
     private List<String> getAllDeletedFilesInIncrementals(){
         String firstBackupFolderName, previousBackupFolderName;
         int currentIncrementalVersion;
@@ -310,13 +307,15 @@ public class Backup {
         return deletedFiles;
     }
 
-    // Cancella i file recentemente eliminati se sono già stati eliminati
+    /**
+     * Cancella le copie di file eliminati (presenti nella lista) con lo stesso nome
+     * @param list lista aggiornata
+     */
     private void deleteDeletedCopies(List<String> list){
         List<String> comp = new ArrayList<>();
         File delFile = new File(Utils.combine(previousBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
         if (delFile.exists() && delFile.isFile()){
             try(BufferedReader br = new BufferedReader(new FileReader(delFile))) {
-                StringBuilder sb = new StringBuilder();
                 String line = br.readLine();
                 while (line != null) {
                     comp.add(line);
@@ -328,7 +327,11 @@ public class Backup {
         list.removeAll(comp);
     }
 
-    // ricorsiva
+    /**
+     * Controlla i file eliminati rispetto alla sorgente
+     * @param folder cartella del backup incrementale
+     * @return lista dei nomi dei file non presenti nella sorgente (con percorso relativo)
+     */
     private List<String> startIncrementalDeleted(@NotNull File folder){
         List<String> deleted = new ArrayList<>();
         if (folder.isDirectory()) {
