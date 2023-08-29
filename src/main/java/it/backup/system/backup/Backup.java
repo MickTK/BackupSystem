@@ -1,15 +1,15 @@
 package it.backup.system.backup;
 
 import it.backup.system.utils.Utils;
-import it.backup.system.zip.Zip;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -19,6 +19,7 @@ public class Backup {
 
     /* Macros */
     public final String DELETED_FILES_FILE_NAME = "_deleted_._files_"; // Nome del file che tiene traccia dei file eliminati
+    public final String MODIFIED_FILES_FILE_NAME = "_modified_._files_"; // Nome del file che tiene traccia dei file eliminati
     // "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Espressione regolare senza .zip
     public final String REGEX = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)(\\.zip)?"; // Esempio: "Nome backup (b.1.2.3)"
 
@@ -31,8 +32,8 @@ public class Backup {
     private File destinationFolder;    // Cartella di destinazione
     private File deletedFilesFile;     // File che tiene traccia dei file eliminati rispetto al backup completo
 
-    private boolean previousBackupFolderIsZip = false;
-    private Zip previousBackupFolderZip;
+    //private boolean previousBackupFolderIsZip = false;
+    //private Zip previousBackupFolderZip;
 
     /**
      * Costruttore
@@ -77,10 +78,7 @@ public class Backup {
                 break;
             case Differential:
                 temp = getLatestBackupName(sourceFolder.getName(), BackupType.Complete);
-                if (!previousBackupFolderIsZip)
-                    previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
-                else
-                    previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp + ".zip"));
+                previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
                 if (previousBackupFolder.exists()){
                     if (previousBackupFolder.isDirectory()) {
                         backupFolder = new File(Utils.combine(
@@ -88,13 +86,14 @@ public class Backup {
                                 backupNameBuilder(temp))
                         );
                         if (backupFolder.mkdir()) {
+                            createDeletedFilesFile();
                             startDifferential(new File(sourceFolder.getAbsolutePath()));
                             startDifferentialDeleted(previousBackupFolder);
                             if (Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
                                 backupFolder.delete();
                         }
                     }
-                    else if (Zip.isZip(previousBackupFolder)) {
+                    /*else if (Zip.isZip(previousBackupFolder)) {
                         if (Zip.isZip(previousBackupFolder))
                             previousBackupFolderZip = new Zip(previousBackupFolder.getAbsolutePath());
                         backupFolder = new File(Utils.combine(
@@ -107,7 +106,7 @@ public class Backup {
                             if (Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
                                 backupFolder.delete();
                         }
-                    }
+                    }*/
                     else { throw new Exception(previousBackupFolder + " is not a directory."); }
                 }
                 else { throw new Exception(previousBackupFolder + " does not exists."); }
@@ -121,9 +120,12 @@ public class Backup {
                             backupNameBuilder(temp))
                     );
                     if (backupFolder.mkdir()){
+                        createDeletedFilesFile();
+                        createModifiedFilesFile();
                         startIncremental(sourceFolder);
-                        if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
-                            backupFolder.delete();
+                        writeOnDeletedFilesFile(getAllDeletedFilesInIncrementals());
+                        /*if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
+                            backupFolder.delete();*/
                     }
                 }
                 else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
@@ -224,7 +226,6 @@ public class Backup {
                     // Se il file è stato rimosso
                     if (!sourceFile.exists()){
                         // Aggiunge il file rimosso alla lista dei file rimossi
-                        createDeletedFilesFile();
                         writeOnDeletedFilesFile(file);
                     }
                     // Se il file non è stato rimosso ed è una cartella
@@ -232,47 +233,6 @@ public class Backup {
                         // Itera sul contenuto della cartella
                         startDifferentialDeleted(file);
                     }
-                }
-            }
-        }
-    }
-
-    /**
-     * Effettua un backup differenziale (il metodo è ricorsivo)
-     * @param folder cartella corrente
-     */
-    private void startDifferentialZip(@NotNull File folder) {
-        if (folder.isDirectory()) {
-            File[] sourceFiles = folder.listFiles();
-            if (sourceFiles != null) {
-                for (File sourceFile : sourceFiles) {
-                    if (isIgnored(sourceFile)) continue;
-                    // Cerchiamo il file nella cartella dell'ultimo backup effettuato
-                    ZipEntry previousFile = previousBackupFolderZip.getEntry(
-                            sourceFile.getAbsolutePath().replace(
-                                    sourceFolder.getAbsolutePath(),
-                                    previousBackupFolder.getName().replace(".zip",""))
-                    );
-                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
-                            sourceFolder.getAbsolutePath(),
-                            backupFolder.getAbsolutePath()
-                    ));
-
-                    /* File creati/modificati */
-                    try {
-                        if (sourceFile.isFile()){
-                            // Se il file è stato creato/modificato
-                            if (previousFile == null || previousFile.getTime() < sourceFile.lastModified()){
-                                if(!destinationFile.getParentFile().exists())
-                                    destinationFile.getParentFile().mkdirs();
-                                Files.copy(sourceFile.toPath(), destinationFile.toPath());
-                            }
-                        }
-                        else if (sourceFile.isDirectory()){
-                            startDifferentialZip(sourceFile);
-                        }
-                    }
-                    catch (Exception e){e.printStackTrace();}
                 }
             }
         }
@@ -309,6 +269,7 @@ public class Backup {
                                 if(!destinationFile.getParentFile().exists())
                                     destinationFile.getParentFile().mkdirs();
                                 Files.copy(file.toPath(), destinationFile.toPath());
+                                writeOnModifiedFilesFile(destinationFile);
                             }
                         }
                         else if (file.isDirectory()){
@@ -320,6 +281,185 @@ public class Backup {
             }
         }
     }
+
+
+
+
+
+    private File modifiedFilesFile; // File che tiene traccia dei file aggiunti e modificati
+    /**
+     * Crea il file che tiene traccia dei file aggiunti e modificati
+     */
+    private void createModifiedFilesFile(){
+        try {
+            modifiedFilesFile = new File(Utils.combine(backupFolder.getAbsolutePath(), MODIFIED_FILES_FILE_NAME));
+            if (!modifiedFilesFile.exists()) modifiedFilesFile.createNewFile();
+        }
+        catch(Exception e){e.printStackTrace();}
+    }
+    /**
+     * Scrive il percorso relativo del file passato come input dentro il file dei file modificati
+     * @param file file il quale percorso è da inserire nella lista
+     */
+    private void writeOnModifiedFilesFile(File file){
+        try {
+            String f = file.getAbsolutePath().replace(backupFolder.getAbsolutePath(),"") + "\n";
+            Files.write(
+                    modifiedFilesFile.toPath(),
+                    f.getBytes(),
+                    StandardOpenOption.APPEND
+            );
+        }
+        catch(Exception e){e.printStackTrace();}
+    }
+
+
+    File tempBackupFolder;
+    /**
+     * Ottiene i nomi dei file eliminati rispetto all'ultimo backup completo (e quello differenziale)
+     * @return lista dei nomi dei file (percorso relativo)
+     */
+    private List<String> deletedFiles(){
+        List<String> first, second;
+        String firstBackupName, secondBackupName;
+
+        // Ottiene il nome dell'ultimo backup completo
+        firstBackupName = getLatestBackupName(sourceFolder.getName(), BackupType.Complete);
+        // Ottiene il nome dell'ultimo backup differenziale
+        secondBackupName = getLatestBackupName(sourceFolder.getName(), BackupType.Differential);
+        // Ottiene i nomi dei file presenti nel backup completo ma non nella sorgente
+        tempBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), firstBackupName));
+        first = getAllDeletedFiles(tempBackupFolder);
+        // Se esiste un backup differenziale postumo al backup completo
+        if (!firstBackupName.equals(secondBackupName)){
+            // Ottiene i nomi dei file presenti nel backup differenziale ma non nella sorgente
+            tempBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), secondBackupName));
+            second = getAllDeletedFiles(tempBackupFolder);
+            first.addAll(second);
+        }
+        return first;
+    }
+    // Ricorsiva
+    // folder = tempBackupFolder = cartella corrente da analizzare
+    private List<String> getAllDeletedFiles(@NotNull File folder){
+        List<String> deleted = new ArrayList<>();
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (isIgnored(file)) continue;
+                    // Viene cercato il file nella cartella sorgente
+                    File sourceFile = new File(file.getAbsolutePath().replace(
+                            tempBackupFolder.getAbsolutePath(),
+                            sourceFolder.getAbsolutePath()
+                    ));
+                    // Se il file è stato rimosso
+                    if (!sourceFile.exists()){
+                        // Aggiunge il file rimosso alla lista dei file rimossi (come percorso relativo)
+                        deleted.add(file.getAbsolutePath().replace(tempBackupFolder.getAbsolutePath(), ""));
+                    }
+                    // Se il file non è stato rimosso ed è una cartella
+                    else if (file.isDirectory()){
+                        // Itera sul contenuto della cartella
+                        deleted.addAll(getAllDeletedFiles(file));
+                    }
+                }
+            }
+        }
+        return deleted;
+    }
+
+    private List<String> getAllDeletedFilesInIncrementals(){
+        String start, iter, current;
+        int currentIncrementalVersion;
+        List<String> list = new ArrayList<>();
+
+        start = getLatestBackupName(sourceFolder.getName(), BackupType.Differential);
+        current = backupFolder.getName();
+        currentIncrementalVersion = getBackupVersion(start, BackupType.Incremental);
+        iter = backupNameBuilder(
+            sourceFolder.getName(),
+            getBackupVersion(start, BackupType.Complete),
+            getBackupVersion(start, BackupType.Differential),
+            currentIncrementalVersion
+        );
+        while (!iter.equals(current)){
+            tempBackupFolder = new File(backupFolder.getAbsolutePath().replace(current, iter));
+            list.addAll(startIncrementalDeleted(tempBackupFolder)); // Aggiunge i file che non trova
+            deleteDeletedCopies(list); // Rimuove i file che sono già stati eliminati
+            currentIncrementalVersion++;
+            iter = backupNameBuilder(
+                    sourceFolder.getName(),
+                    getBackupVersion(start, BackupType.Complete),
+                    getBackupVersion(start, BackupType.Differential),
+                    currentIncrementalVersion
+            );
+        }
+        return list;
+    }
+
+    // Cancella i file recentemente eliminati se sono già stati eliminati
+    private void deleteDeletedCopies(List<String> list){
+        List<String> comp = new ArrayList<>();
+        File delFile = new File(Utils.combine(tempBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
+        if (delFile.exists() && delFile.isFile()){
+            try(BufferedReader br = new BufferedReader(new FileReader(delFile))) {
+                StringBuilder sb = new StringBuilder();
+                String line = br.readLine();
+                while (line != null) {
+                    comp.add(line);
+                    line = br.readLine();
+                }
+            }
+            catch (Exception e) { e.printStackTrace(); }
+        }
+        list.removeAll(comp);
+    }
+
+    // ricorsiva
+    private List<String> startIncrementalDeleted(@NotNull File folder){
+        List<String> deleted = new ArrayList<>();
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (isIgnored(file)) continue;
+
+                    // Viene cercato il file nella cartella sorgente
+                    File sourceFile = new File(file.getAbsolutePath().replace(
+                            tempBackupFolder.getAbsolutePath(),
+                            sourceFolder.getAbsolutePath()
+                    ));
+                    // Se il file è stato rimosso
+                    if (!sourceFile.exists()){
+                        // Aggiunge il file rimosso alla lista dei file rimossi
+                        deleted.add(file.getAbsolutePath().replace(tempBackupFolder.getAbsolutePath(), ""));
+                    }
+                    // Se il file non è stato rimosso ed è una cartella
+                    else if (file.isDirectory()){
+                        // Itera sul contenuto della cartella
+                        deleted.addAll(startIncrementalDeleted(file));
+                    }
+                }
+            }
+        }
+        return deleted;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /* Deleted files file */
 
@@ -342,8 +482,23 @@ public class Backup {
         }
         catch(Exception e){e.printStackTrace();}
     }
+    private void writeOnDeletedFilesFile(List<String> list){
+        try {
+            String f = String.join("\n", list);
+            Files.write(
+                    deletedFilesFile.toPath(),
+                    f.getBytes(),
+                    StandardOpenOption.APPEND
+            );
+        }
+        catch(Exception e){e.printStackTrace();}
+    }
 
     /* Utils */
+
+    private String backupNameBuilder(String name, int completeVersion, int differentialVersion, int incrementalVersion){
+        return String.format("%s (b.%d.%d.%d)", getBackupName(name), completeVersion, differentialVersion, incrementalVersion);
+    }
 
     /**
      * Crea il nome della cartella di backup in base al tipo di backup da effettuare
@@ -388,8 +543,6 @@ public class Backup {
         Matcher matcher = pattern.matcher(name);
 
         if (matcher.matches()) {
-            if (name.endsWith(".zip"))
-                previousBackupFolderIsZip = true;
             return matcher.group(1);
         }
         return name;
@@ -427,8 +580,7 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory() || Zip.isZip(destinationFile)){
-                        previousBackupFolderIsZip = Zip.isZip(destinationFile);
+                    if (destinationFile.isDirectory()){
                         current = getBackupVersion(destinationFile.getName(), BackupType.Complete);
                         if (current > version){
                             version = current;
@@ -453,8 +605,7 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory() || Zip.isZip(destinationFile)){
-                        previousBackupFolderIsZip = Zip.isZip(destinationFile);
+                    if (destinationFile.isDirectory()){
                         if (getBackupVersion(destinationFile.getName(), BackupType.Complete) == completeVersion){
                             current = getBackupVersion(destinationFile.getName(), BackupType.Differential);
                             if (current > version){
@@ -538,8 +689,17 @@ public class Backup {
      * @return true se il file è da ignorare, altrimenti false
      */
     private boolean isIgnored(@NotNull File file){
-        return file.getName().equals(DELETED_FILES_FILE_NAME);
+        return file.getName().equals(DELETED_FILES_FILE_NAME) || file.getName().equals(MODIFIED_FILES_FILE_NAME);
     }
+
+
+
+
+
+
+
+
+
 
 
     /**
