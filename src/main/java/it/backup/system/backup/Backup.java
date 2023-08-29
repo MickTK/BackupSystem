@@ -24,10 +24,10 @@ public class Backup {
     /* Attributes */
     private BackupType backupType; // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
 
-    private File sourceFolder;         // Cartella da salvare
-    private File backupFolder;         // Cartella del backup corrente
-    private File previousBackupFolder; // Ultimo backup effettuato
-    private File destinationFolder;    // Cartella di destinazione
+    File sourceFolder;         // Cartella da salvare
+    File backupFolder;         // Cartella del backup corrente
+    File previousBackupFolder; // Ultimo backup effettuato
+    File destinationFolder;    // Cartella di destinazione
     private File deletedFilesFile;     // File che tiene traccia dei file eliminati rispetto al backup completo
 
     /**
@@ -50,8 +50,16 @@ public class Backup {
         this.backupType = type;
     }
 
-    public File getBackupFolder() {
-        return backupFolder;
+    public Backup(String sourceFolderPath, String destinationFolderPath) throws Exception {
+        sourceFolder = new File(sourceFolderPath);
+        if (!sourceFolder.exists() || !sourceFolder.isDirectory())
+            throw new Exception(sourceFolderPath + " does not exists or it is not a directory.");
+        this.destinationFolder = new File(destinationFolderPath);
+        if (!destinationFolder.exists() || !destinationFolder.isDirectory())
+            throw new Exception(destinationFolderPath + " does not exists or it is not a directory.");
+        this.backupFolder = null;
+        this.previousBackupFolder = null;
+        this.deletedFilesFile = null;
     }
 
     /* Backup */
@@ -60,325 +68,11 @@ public class Backup {
      * Effettua un backup della sorgente nella destinazione in base al tipo di backup
      * @throws Exception non esiste un backup precedente (per il differenziale/incrementale)
      */
-    public void start() throws Exception {
-        String temp;
-        switch (backupType){
-            case Complete:
-                backupFolder = new File(Utils.combine(
-                    destinationFolder.getAbsolutePath(),
-                    backupNameBuilder(sourceFolder.getName()))
-                );
-                if (backupFolder.mkdir())
-                    startComplete(sourceFolder);
-                break;
-            case Differential:
-                temp = getLatestBackupName(sourceFolder.getName(), BackupType.Complete);
-                previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
-                if (previousBackupFolder.exists()){
-                    if (previousBackupFolder.isDirectory()) {
-                        backupFolder = new File(Utils.combine(
-                                destinationFolder.getAbsolutePath(),
-                                backupNameBuilder(temp))
-                        );
-                        if (backupFolder.mkdir()) {
-                            createDeletedFilesFile();
-                            startDifferential(new File(sourceFolder.getAbsolutePath()));
-                            startDifferentialDeleted(previousBackupFolder);
-                            if (Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
-                                backupFolder.delete();
-                        }
-                    }
-                    /*else if (Zip.isZip(previousBackupFolder)) {
-                        if (Zip.isZip(previousBackupFolder))
-                            previousBackupFolderZip = new Zip(previousBackupFolder.getAbsolutePath());
-                        backupFolder = new File(Utils.combine(
-                                destinationFolder.getAbsolutePath(),
-                                backupNameBuilder(temp))
-                        );
-                        if (backupFolder.mkdir()) {
-                            startDifferentialZip(new File(sourceFolder.getAbsolutePath()));
-                            //startDifferentialDeleted(previousBackupFolder);
-                            if (Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
-                                backupFolder.delete();
-                        }
-                    }*/
-                    else { throw new Exception(previousBackupFolder + " is not a directory."); }
-                }
-                else { throw new Exception(previousBackupFolder + " does not exists."); }
-                break;
-            case Incremental:
-                temp = getLatestBackupName(sourceFolder.getName(), BackupType.Incremental);
-                previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
-                if (previousBackupFolder.exists() && previousBackupFolder.isDirectory()){
-                    backupFolder = new File(Utils.combine(
-                            destinationFolder.getAbsolutePath(),
-                            backupNameBuilder(temp))
-                    );
-                    if (backupFolder.mkdir()){
-                        createDeletedFilesFile();
-                        startIncremental(sourceFolder);
-                        writeOnDeletedFilesFile(getAllDeletedFilesInIncrementals());
-                        /*if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
-                            backupFolder.delete();*/
-                    }
-                }
-                else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
-                break;
-            default: break;
-        }
-    }
-
-    /* Complete backup */
-
-    /**
-     * Effettua un backup completo (il metodo è ricorsivo)
-     * @param folder cartella corrente
-     */
-    private void startComplete(@NotNull File folder) {
-        if (folder.isDirectory()) {
-            File[] sourceFiles = folder.listFiles();
-            if (sourceFiles != null) {
-                for (File sourceFile : sourceFiles) {
-                    // Crea un file con il percorso di destinazione
-                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
-                        sourceFolder.getAbsolutePath(),
-                        backupFolder.getAbsolutePath()
-                    ));
-                    // Se il file è una cartella, la crea
-                    if (sourceFile.isDirectory()) {
-                        if(!Files.exists(destinationFile.toPath())) destinationFile.mkdir();
-                        startComplete(sourceFile);
-                    }
-                    // Se il file non è una cartella, copia il contenuto del file originale nella cartella di destinazione
-                    else if (sourceFile.isFile()) {
-                        try{Files.copy(sourceFile.toPath(), destinationFile.toPath());}
-                        catch(Exception e){ e.printStackTrace(); }
-                    }
-                }
-            }
-        }
-    }
-
-    /* Differential backup */
-
-    /**
-     * Effettua un backup differenziale (il metodo è ricorsivo)
-     * @param folder cartella corrente
-     */
-    private void startDifferential(@NotNull File folder) {
-        if (folder.isDirectory()) {
-            File[] sourceFiles = folder.listFiles();
-            if (sourceFiles != null) {
-                for (File sourceFile : sourceFiles) {
-                    if (isIgnored(sourceFile)) continue;
-                    // Cerchiamo il file nella cartella dell'ultimo backup effettuato
-                    File previousFile = new File(sourceFile.getAbsolutePath().replace(
-                        sourceFolder.getAbsolutePath(),
-                        previousBackupFolder.getAbsolutePath()
-                    ));
-                    File destinationFile = new File(sourceFile.getAbsolutePath().replace(
-                        sourceFolder.getAbsolutePath(),
-                        backupFolder.getAbsolutePath()
-                    ));
-
-                    /* File creati/modificati */
-                    try {
-                        if (sourceFile.isFile()){
-                            // Se il file è stato creato/modificato
-                            if (!previousFile.exists() || (previousFile.exists() && Utils.lastModifiedDateCompare(sourceFile, previousFile) < 0)){
-                                if(!destinationFile.getParentFile().exists())
-                                    destinationFile.getParentFile().mkdirs();
-                                Files.copy(sourceFile.toPath(), destinationFile.toPath());
-                            }
-                        }
-                        else if (sourceFile.isDirectory()){
-                            startDifferential(sourceFile);
-                        }
-                    }
-                    catch (Exception e){e.printStackTrace();}
-                }
-            }
-        }
-    }
-
-    /**
-     * Salva tutti i nomi dei file eliminati in un file (il metodo è ricorsivo)
-     * @param folder cartella corrente
-     */
-    private void startDifferentialDeleted(@NotNull File folder){
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (isIgnored(file)) continue;
-
-                    // Viene cercato il file nella cartella sorgente
-                    File sourceFile = new File(file.getAbsolutePath().replace(
-                        previousBackupFolder.getAbsolutePath(),
-                        sourceFolder.getAbsolutePath()
-                    ));
-                    // Se il file è stato rimosso
-                    if (!sourceFile.exists()){
-                        // Aggiunge il file rimosso alla lista dei file rimossi
-                        writeOnDeletedFilesFile(file);
-                    }
-                    // Se il file non è stato rimosso ed è una cartella
-                    else if (file.isDirectory()){
-                        // Itera sul contenuto della cartella
-                        startDifferentialDeleted(file);
-                    }
-                }
-            }
-        }
-    }
-
-    /* Incremental Backup */
-
-    /**
-     * Effettua un backup incrementale (il metodo è ricorsivo)
-     * @param folder cartella corrente
-     */
-    private void startIncremental(@NotNull File folder) {
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (isIgnored(file)) continue;
-
-                    // Cerchiamo il file nella cartella dell'ultimo backup
-                    File previousFile = new File(file.getAbsolutePath().replace(
-                        sourceFolder.getAbsolutePath(),
-                        previousBackupFolder.getAbsolutePath()
-                    ));
-                    File destinationFile = new File(file.getAbsolutePath().replace(
-                        sourceFolder.getAbsolutePath(),
-                        backupFolder.getAbsolutePath()
-                    ));
-
-                    /* File creati/modificati */
-                    try {
-                        if (file.isFile()){
-                            // Se il file è stato creato/modificato
-                            if (Utils.lastModifiedDateCompare(file, previousBackupFolder) < 0){
-                                if(!destinationFile.getParentFile().exists())
-                                    destinationFile.getParentFile().mkdirs();
-                                Files.copy(file.toPath(), destinationFile.toPath());
-                            }
-                        }
-                        else if (file.isDirectory()){
-                            startIncremental(file);
-                        }
-                    }
-                    catch (Exception e){e.printStackTrace();}
-                }
-            }
-        }
-    }
-
-    /**
-     * Ottiene i file eliminati da salvare con il backup incrementale corrente
-     * @return lista di nomi di file (percorso relativo)
-     */
-    private List<String> getAllDeletedFilesInIncrementals(){
-        String firstBackupFolderName, previousBackupFolderName;
-        int currentIncrementalVersion;
-        List<String> deletedFiles = new ArrayList<>();
-
-        firstBackupFolderName = getLatestBackupName(sourceFolder.getName(), BackupType.Complete);
-        currentIncrementalVersion = getBackupVersion(firstBackupFolderName, BackupType.Incremental);
-        previousBackupFolderName = backupNameBuilder(
-            sourceFolder.getName(),
-            getBackupVersion(firstBackupFolderName, BackupType.Complete),
-            getBackupVersion(firstBackupFolderName, BackupType.Differential),
-            currentIncrementalVersion
-        );
-        while (currentIncrementalVersion < getBackupVersion(backupFolder.getName(), BackupType.Incremental)){
-            previousBackupFolder = new File(backupFolder.getAbsolutePath().replace(backupFolder.getName(), previousBackupFolderName));
-            deletedFiles.addAll(startIncrementalDeleted(previousBackupFolder)); // Aggiunge i file che non trova
-            deleteDeletedCopies(deletedFiles); // Rimuove i file che sono già stati eliminati
-            currentIncrementalVersion++;
-            previousBackupFolderName = backupNameBuilder(
-                    sourceFolder.getName(),
-                    getBackupVersion(firstBackupFolderName, BackupType.Complete),
-                    getBackupVersion(firstBackupFolderName, BackupType.Differential),
-                    currentIncrementalVersion
-            );
-        }
-        return deletedFiles;
-    }
-
-    /**
-     * Cancella le copie di file eliminati (presenti nella lista) con lo stesso nome
-     * @param list lista aggiornata
-     */
-    private void deleteDeletedCopies(List<String> list){
-        List<String> comp = new ArrayList<>();
-        File delFile = new File(Utils.combine(previousBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
-        if (delFile.exists() && delFile.isFile()){
-            try(BufferedReader br = new BufferedReader(new FileReader(delFile))) {
-                String line = br.readLine();
-                while (line != null) {
-                    comp.add(line);
-                    line = br.readLine();
-                }
-            }
-            catch (Exception e) { e.printStackTrace(); }
-        }
-        list.removeAll(comp);
-    }
-
-    /**
-     * Controlla i file eliminati rispetto alla sorgente
-     * @param folder cartella del backup incrementale
-     * @return lista dei nomi dei file non presenti nella sorgente (con percorso relativo)
-     */
-    private List<String> startIncrementalDeleted(@NotNull File folder){
-        List<String> deleted = new ArrayList<>();
-        if (folder.isDirectory()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (isIgnored(file)) continue;
-
-                    // Viene cercato il file nella cartella sorgente
-                    File sourceFile = new File(file.getAbsolutePath().replace(
-                            previousBackupFolder.getAbsolutePath(),
-                            sourceFolder.getAbsolutePath()
-                    ));
-                    // Se il file è stato rimosso
-                    if (!sourceFile.exists()){
-                        // Aggiunge il file rimosso alla lista dei file rimossi
-                        deleted.add(file.getAbsolutePath().replace(previousBackupFolder.getAbsolutePath(), ""));
-                    }
-                    // Se il file non è stato rimosso ed è una cartella
-                    else if (file.isDirectory()){
-                        // Itera sul contenuto della cartella
-                        deleted.addAll(startIncrementalDeleted(file));
-                    }
-                }
-            }
-        }
-        return deleted;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void start() throws Exception { }
 
     /* Deleted files file */
 
-    private void createDeletedFilesFile(){
+    void createDeletedFilesFile(){
         try {
             deletedFilesFile = new File(Utils.combine(backupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
             if (!deletedFilesFile.exists())
@@ -386,7 +80,7 @@ public class Backup {
         }
         catch(Exception e){e.printStackTrace();}
     }
-    private void writeOnDeletedFilesFile(File file){
+    void writeOnDeletedFilesFile(File file){
         try {
             String f = file.getAbsolutePath().replace(previousBackupFolder.getAbsolutePath(),"") + "\n";
             Files.write(
@@ -397,7 +91,7 @@ public class Backup {
         }
         catch(Exception e){e.printStackTrace();}
     }
-    private void writeOnDeletedFilesFile(List<String> list){
+    void writeOnDeletedFilesFile(List<String> list){
         try {
             String f = String.join("\n", list);
             Files.write(
@@ -411,7 +105,7 @@ public class Backup {
 
     /* Utils */
 
-    private String backupNameBuilder(String name, int completeVersion, int differentialVersion, int incrementalVersion){
+    String backupNameBuilder(String name, int completeVersion, int differentialVersion, int incrementalVersion){
         return String.format("%s (b.%d.%d.%d)", getBackupName(name), completeVersion, differentialVersion, incrementalVersion);
     }
 
@@ -420,7 +114,7 @@ public class Backup {
      * @param name nome della sorgente
      * @return
      */
-    private String backupNameBuilder(String name){
+    String backupNameBuilder(String name){
         int completeVersion;
         int differentialVersion;
         int incrementalVersion;
@@ -469,7 +163,7 @@ public class Backup {
      * @param backupType tipo di versione
      * @return numero di versione
      */
-    private int getBackupVersion(String name, BackupType backupType){
+    int getBackupVersion(String name, BackupType backupType){
         Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(name);
 
@@ -567,7 +261,7 @@ public class Backup {
      * @param backupType tipo di backup
      * @return nome completo dell'ultimo backup effettuato
      */
-    private String getLatestBackupName(String name, BackupType backupType){
+    String getLatestBackupName(String name, BackupType backupType){
         int completeVersion;
         int differentialVersion;
         int incrementalVersion;
@@ -603,19 +297,9 @@ public class Backup {
      * @param file file da controllare
      * @return true se il file è da ignorare, altrimenti false
      */
-    private boolean isIgnored(@NotNull File file){
+    boolean isIgnored(@NotNull File file){
         return file.getName().equals(DELETED_FILES_FILE_NAME);
     }
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Crea un file compresso della cartella sorgente nella cartella di destinazione

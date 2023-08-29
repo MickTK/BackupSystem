@@ -1,7 +1,6 @@
 package it.backup.system;
 
-import it.backup.system.backup.Backup;
-import it.backup.system.backup.BackupType;
+import it.backup.system.backup.*;
 import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -117,11 +116,27 @@ public class Controller {
 
         if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
             try {
-                backup = new Backup(
-                    source.getAbsolutePath(),
-                    destination.getAbsolutePath(),
-                    backupType
-                );
+                switch (backupType) {
+                    case Complete:
+                        backup = new CompleteBackup(
+                                source.getAbsolutePath(),
+                                destination.getAbsolutePath()
+                        );
+                        break;
+                    case Differential:
+                        backup = new DifferentialBackup(
+                                source.getAbsolutePath(),
+                                destination.getAbsolutePath()
+                        );
+                        break;
+                    case Incremental:
+                        backup = new IncrementalBackup(
+                                source.getAbsolutePath(),
+                                destination.getAbsolutePath()
+                        );
+                        break;
+                    default: break;
+                }
 
                 consoleLog.setText("");
                 log("Backup in corso.");
