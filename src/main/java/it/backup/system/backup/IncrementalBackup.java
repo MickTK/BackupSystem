@@ -111,37 +111,6 @@ public class IncrementalBackup extends Backup {
     }
 
     /**
-     * Cancella le copie di file eliminati (presenti nella lista) con lo stesso nome
-     * @param list lista aggiornata
-     */
-    private void clearDeletedFilesList(List<String> list){
-        List<String> comp = new ArrayList<>();
-        File delFile = new File(Utils.combine(previousBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
-
-        // Legge e salva tutti i percorsi dei file eliminati presenti su file
-        if (delFile.exists() && delFile.isFile()){
-            try(BufferedReader br = new BufferedReader(new FileReader(delFile))) {
-                String line = br.readLine();
-                while (line != null) {
-                    comp.add(line);
-                    line = br.readLine();
-                }
-            }
-            catch (Exception e) { e.printStackTrace(); }
-        }
-
-        // Rimuove i file già precedentemente eliminati
-        list.removeAll(comp);
-        // Rimuove i file già precedentemente eliminati se il percorso corrisponde ad uno di quelli precedenti
-        for (String c : comp){
-            list.removeIf(s -> s.startsWith(c + "/"));
-        }
-        // Rimuove i duplicati
-        Set<String> uniqueStrings = new HashSet<>(list);
-        list = new ArrayList<>(uniqueStrings);
-    }
-
-    /**
      * Controlla i file eliminati rispetto alla sorgente
      * @param folder cartella del backup incrementale
      * @return lista dei nomi dei file non presenti nella sorgente (con percorso relativo)
@@ -173,5 +142,36 @@ public class IncrementalBackup extends Backup {
             }
         }
         return deleted;
+    }
+
+    /**
+     * Cancella le copie di file eliminati (presenti nella lista) con lo stesso nome
+     * @param list lista aggiornata
+     */
+    private void clearDeletedFilesList(List<String> list){
+        List<String> comp = new ArrayList<>();
+        File delFile = new File(Utils.combine(previousBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
+
+        // Legge e salva tutti i percorsi dei file eliminati presenti su file
+        if (delFile.exists() && delFile.isFile()){
+            try(BufferedReader br = new BufferedReader(new FileReader(delFile))) {
+                String line = br.readLine();
+                while (line != null) {
+                    comp.add(line);
+                    line = br.readLine();
+                }
+            }
+            catch (Exception e) { e.printStackTrace(); }
+        }
+
+        // Rimuove i file già precedentemente eliminati
+        list.removeAll(comp);
+        // Rimuove i file già precedentemente eliminati se il percorso corrisponde ad uno di quelli precedenti
+        for (String c : comp){
+            list.removeIf(s -> s.startsWith(c + "/"));
+        }
+        // Rimuove i duplicati
+        Set<String> uniqueStrings = new HashSet<>(list);
+        list = new ArrayList<>(uniqueStrings);
     }
 }

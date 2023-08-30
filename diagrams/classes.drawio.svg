@@ -1,213 +1,244 @@
-<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="641px" height="662px" viewBox="-0.5 -0.5 641 662" content="&lt;mxfile&gt;&lt;diagram id=&quot;Yb8O2a5heUDM8CXdSpTg&quot; name=&quot;Page-1&quot;&gt;7Ztdb+MoFIZ/TaT2oit/JU0v89XZSunsaFLNXo5IQmI0GLyYNOn8+j0Y7NjB6WRal71YS1VqjjEYntdwDja9cJIcPgmUxo98jWkv8NaHXjjtBUE4vINfZXgxhsDXhq0ga22qGBbkJzZGz1h3ZI2zWkbJOZUkrRtXnDG8kjUbEoLv69k2nNZrTdEWW4bFClHb+jdZy1hbh8Ht0f4nJtu4qNkfmAYnqMhsWpLFaM33FVM464UTwbnUR8lhgqnqu6Jf9HX3Z86WNyYwk5dcEOgLnhHdmbaN0erHLjV3J1+KJmd7klDEIDXecCYX5owPaUTJlsHxCurEAgzPWEgCvTUyJyRPwbqKCV3P0QvfqTvLJNRTpMYxF+QnFIuoKRNOC2nAB4NajoW6EsweWAXOIM+Xorn+iekRHWoZ5yiTxrDilKI0I8uyGQkSW8LGXEqemEx2b5oOVi3Eh4rJ9O4nzBMsxQtkMWcjA/qlntwfZRN5xhZXJDPoD41cjVS3ZcllZV9B2ohtoQFlbeUTcr66YUNtoVevDFEAyZDEY75j66yqIDioNPNoynXVrLGBpbFeAF3rTWfz2dNs+v3+YT5b5L/fP48eoYgRnFxIQdjWkiH0uszlIfgPPOGUg96mjGtdEkpPTIU0Kd7Is8LMUrSCuuZ5nml0tHw1PaRMHK7d0PxRjcl6jZkSFZdIIq0gJZeUEybzLuyP4Q86deL90e/14cYnkPaPafhT2YWccAZtQSTXFwZ57rGSaIPygouVZ9gX/f4rqRX5mpRWo/4K4tBCfAPJZT6UPL2kWDMdH9Md1zdz7QfuuN42cs34TqzwPcyaarhXZO8J7Zi+g+nt0B3T4SvPase0Paa+F7mD6t81Uk0FfiZ8l407ujZdC2UD8PN0wws9uTboFtHCCV2IgSQBN41w1qFtEW3foedURhSnaCmWeK1QZjnPjmwbZIcOfaeoIew5QUdJjkSjK1YS/DdxS4AAxUdQT4rj9Ma3YIY2zLABHEVLTL/wjKjRBWxC5z0B+itmdVESFmNB2gpvvAt9plcC6UtR2pOrjmD1tHql/eF63Dqpj8/2SdkQFl1rwzOHiv/fj/n7pOE7HMB9e27W4thiWXW7rq67MbwVuJHDMdy3Z2cNN1+fvOqe15ZWqhyGv7695H1TAJ3wJFV+19XmxJ3uQLcD+s5lSNy8KJmDnpLNBquGEEQ72B8DOwwcRsi+7W03wp7quKpj/kHMI5eeV/888we2EjjB6n1hx/qDWN+6dMTsl4iKNUBGEk9PFks6v6wlwncu/bLmd017QST+i1mIN7VFsQ54K8CjwKF/FjUvausXUZ9Rgsc7kgfODI6r6yfX3RcC7SyHRn2HHlrUvNBdrpIo4h3qD0N969AxK1ZozqH+hkVGOLNo64XR81+NGDWo/umk8GYp9D2XL0Gag3CQwhwct6xccakLowPdCujAofsWNQfgJehqEF6HvTISMOkSfSeCVkTQd+nSNUfkpQgqUXmnAYcaGLr085oj9VIDr3h7F87/nTf4XkEMPJfeYHNgT7KHLeNCrcU2hfJLzilGrKP8DsqhywU6+7PSXjCgqilpjeDgn53a3GK2WwBsLz2UyZscyCjKTQr1jQE4KjeXHEuAo635jxLFkdopzHYJFvoTjOJE/aIilWdfikqh2lIYqh+vD0xN98vT7GBLT22xVejv9IhW7mhod4nRtN0hhVP92k198C1UZvr/8C6qTud5xPUbOxlvshipiWgq8n1k41gmxRalyoCgBh6w7GMi8QKGDnXBXqC0LPB9W4iK6fv8pp6g6bH2C+NvPNeQPG4+03t9jjv4wtm/&lt;/diagram&gt;&lt;/mxfile&gt;">
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1402px" height="636px" viewBox="-0.5 -0.5 1402 636" content="&lt;mxfile&gt;&lt;diagram id=&quot;Yb8O2a5heUDM8CXdSpTg&quot; name=&quot;Page-1&quot;&gt;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&lt;/diagram&gt;&lt;/mxfile&gt;">
     <defs>
-        <clipPath id="mx-clip-4-31-392-26-0">
-            <rect x="4" y="31" width="392" height="26"/>
+        <clipPath id="mx-clip-4-31-602-26-0">
+            <rect x="4" y="31" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-57-392-26-0">
-            <rect x="4" y="57" width="392" height="26"/>
+        <clipPath id="mx-clip-4-57-602-26-0">
+            <rect x="4" y="57" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-83-392-26-0">
-            <rect x="4" y="83" width="392" height="26"/>
+        <clipPath id="mx-clip-4-83-602-26-0">
+            <rect x="4" y="83" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-109-392-26-0">
-            <rect x="4" y="109" width="392" height="26"/>
+        <clipPath id="mx-clip-4-109-602-26-0">
+            <rect x="4" y="109" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-135-392-26-0">
-            <rect x="4" y="135" width="392" height="26"/>
+        <clipPath id="mx-clip-4-135-602-26-0">
+            <rect x="4" y="135" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-161-392-26-0">
-            <rect x="4" y="161" width="392" height="26"/>
+        <clipPath id="mx-clip-4-161-602-26-0">
+            <rect x="4" y="161" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-187-392-26-0">
-            <rect x="4" y="187" width="392" height="26"/>
+        <clipPath id="mx-clip-4-187-602-26-0">
+            <rect x="4" y="187" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-221-392-26-0">
-            <rect x="4" y="221" width="392" height="26"/>
+        <clipPath id="mx-clip-4-213-602-26-0">
+            <rect x="4" y="213" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-247-392-26-0">
-            <rect x="4" y="247" width="392" height="26"/>
+        <clipPath id="mx-clip-4-239-602-26-0">
+            <rect x="4" y="239" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-273-392-26-0">
-            <rect x="4" y="273" width="392" height="26"/>
+        <clipPath id="mx-clip-4-273-602-26-0">
+            <rect x="4" y="273" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-299-392-26-0">
-            <rect x="4" y="299" width="392" height="26"/>
+        <clipPath id="mx-clip-4-299-602-26-0">
+            <rect x="4" y="299" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-325-392-26-0">
-            <rect x="4" y="325" width="392" height="26"/>
+        <clipPath id="mx-clip-4-325-602-26-0">
+            <rect x="4" y="325" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-351-392-26-0">
-            <rect x="4" y="351" width="392" height="26"/>
+        <clipPath id="mx-clip-4-351-602-26-0">
+            <rect x="4" y="351" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-377-392-26-0">
-            <rect x="4" y="377" width="392" height="26"/>
+        <clipPath id="mx-clip-4-377-602-26-0">
+            <rect x="4" y="377" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-403-392-26-0">
-            <rect x="4" y="403" width="392" height="26"/>
+        <clipPath id="mx-clip-4-403-602-26-0">
+            <rect x="4" y="403" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-429-392-26-0">
-            <rect x="4" y="429" width="392" height="26"/>
+        <clipPath id="mx-clip-4-429-602-26-0">
+            <rect x="4" y="429" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-455-392-26-0">
-            <rect x="4" y="455" width="392" height="26"/>
+        <clipPath id="mx-clip-4-455-602-26-0">
+            <rect x="4" y="455" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-481-392-26-0">
-            <rect x="4" y="481" width="392" height="26"/>
+        <clipPath id="mx-clip-4-481-602-26-0">
+            <rect x="4" y="481" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-507-392-26-0">
-            <rect x="4" y="507" width="392" height="26"/>
+        <clipPath id="mx-clip-4-507-602-26-0">
+            <rect x="4" y="507" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-533-392-26-0">
-            <rect x="4" y="533" width="392" height="26"/>
+        <clipPath id="mx-clip-4-533-602-26-0">
+            <rect x="4" y="533" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-559-392-26-0">
-            <rect x="4" y="559" width="392" height="26"/>
+        <clipPath id="mx-clip-4-559-602-26-0">
+            <rect x="4" y="559" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-585-392-26-0">
-            <rect x="4" y="585" width="392" height="26"/>
+        <clipPath id="mx-clip-4-585-602-26-0">
+            <rect x="4" y="585" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-611-392-26-0">
-            <rect x="4" y="611" width="392" height="26"/>
+        <clipPath id="mx-clip-4-611-602-26-0">
+            <rect x="4" y="611" width="602" height="26"/>
         </clipPath>
-        <clipPath id="mx-clip-4-637-392-26-0">
-            <rect x="4" y="637" width="392" height="26"/>
+        <clipPath id="mx-clip-724-39-412-26-0">
+            <rect x="724" y="39" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-65-412-26-0">
+            <rect x="724" y="65" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-91-412-26-0">
+            <rect x="724" y="91" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-209-412-26-0">
+            <rect x="724" y="209" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-235-412-26-0">
+            <rect x="724" y="235" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-261-412-26-0">
+            <rect x="724" y="261" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-287-412-26-0">
+            <rect x="724" y="287" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-399-412-26-0">
+            <rect x="724" y="399" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-425-412-26-0">
+            <rect x="724" y="425" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-451-412-26-0">
+            <rect x="724" y="451" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-477-412-26-0">
+            <rect x="724" y="477" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-503-412-26-0">
+            <rect x="724" y="503" width="412" height="26"/>
+        </clipPath>
+        <clipPath id="mx-clip-724-529-412-26-0">
+            <rect x="724" y="529" width="412" height="26"/>
         </clipPath>
     </defs>
     <g>
-        <path d="M 0 26 L 0 0 L 400 0 L 400 26" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
-        <path d="M 0 26 L 0 658 L 400 658 L 400 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 0 26 L 400 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 26 L 0 0 L 610 0 L 610 26" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 0 26 L 0 632 L 610 632 L 610 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 0 26 L 610 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
         <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
-            <text x="199.5" y="17.5">
+            <text x="304.5" y="17.5">
                 Backup
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-31-392-26-0)" font-size="12px">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-31-602-26-0)" font-size="12px">
             <text x="5.5" y="43.5">
                 + DELETED_FILES_FILE_NAME: String
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-57-392-26-0)" font-size="12px">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-57-602-26-0)" font-size="12px">
             <text x="5.5" y="69.5">
+                + REGEX: String
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-83-602-26-0)" font-size="12px">
+            <text x="5.5" y="95.5">
+                + BACKUP_NAME: String
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-109-602-26-0)" font-size="12px">
+            <text x="5.5" y="121.5">
                 - backupType: BackupType
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-83-392-26-0)" font-size="12px">
-            <text x="5.5" y="95.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-135-602-26-0)" font-size="12px">
+            <text x="5.5" y="147.5">
                 - sourceFolder: File
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-109-392-26-0)" font-size="12px">
-            <text x="5.5" y="121.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-161-602-26-0)" font-size="12px">
+            <text x="5.5" y="173.5">
                 - backupFolder: File
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-135-392-26-0)" font-size="12px">
-            <text x="5.5" y="147.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-187-602-26-0)" font-size="12px">
+            <text x="5.5" y="199.5">
                 - previousBackupFolder: File
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-161-392-26-0)" font-size="12px">
-            <text x="5.5" y="173.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-213-602-26-0)" font-size="12px">
+            <text x="5.5" y="225.5">
                 - destinationFolder: File
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-187-392-26-0)" font-size="12px">
-            <text x="5.5" y="199.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-239-602-26-0)" font-size="12px">
+            <text x="5.5" y="251.5">
                 - deletedFilesFile: File
             </text>
         </g>
-        <path d="M 0 212 L 400 212" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-221-392-26-0)" font-size="12px">
-            <text x="5.5" y="233.5">
-                + Backup(source: String, destination: String, type: BackupType): void
-            </text>
-        </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-247-392-26-0)" font-size="12px">
-            <text x="5.5" y="259.5">
-                + getBackupFolder(): File
-            </text>
-        </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-273-392-26-0)" font-size="12px">
+        <path d="M 0 264 L 610 264" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-273-602-26-0)" font-size="12px">
             <text x="5.5" y="285.5">
+                + Backup(source: String, destination: String, type: BackupType)
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-299-602-26-0)" font-size="12px">
+            <text x="5.5" y="311.5">
                 + start(): void
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-299-392-26-0)" font-size="12px">
-            <text x="5.5" y="311.5">
-                - startComplete(folder: File): void
-            </text>
-        </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-325-392-26-0)" font-size="12px">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-325-602-26-0)" font-size="12px">
             <text x="5.5" y="337.5">
-                - startDifferential(folder: File): void
-            </text>
-        </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-351-392-26-0)" font-size="12px">
-            <text x="5.5" y="363.5">
-                - startDifferentialDeleted(folder: File): void
-            </text>
-        </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-377-392-26-0)" font-size="12px">
-            <text x="5.5" y="389.5">
-                - startIncremental(folder: File): void
-            </text>
-        </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-403-392-26-0)" font-size="12px">
-            <text x="5.5" y="415.5">
                 - createDeletedFilesFile(): void
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-429-392-26-0)" font-size="12px">
-            <text x="5.5" y="441.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-351-602-26-0)" font-size="12px">
+            <text x="5.5" y="363.5">
                 - writeOnDeletedFilesFile(file: File): void
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-455-392-26-0)" font-size="12px">
-            <text x="5.5" y="467.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-377-602-26-0)" font-size="12px">
+            <text x="5.5" y="389.5">
+                - saveDeletedFilesOnLog(list: LIst&lt;String&gt;): void
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-403-602-26-0)" font-size="12px">
+            <text x="5.5" y="415.5">
                 - backupNameBuilder(name: String): String
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-481-392-26-0)" font-size="12px">
-            <text x="5.5" y="493.5">
-                - getBackupName(name: String): String
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-429-602-26-0)" font-size="12px">
+            <text x="5.5" y="441.5">
+                - backupNameBuilder(name: String, completeVersion: int, differentialVersion: int, incrementalVersion: int): String
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-507-392-26-0)" font-size="12px">
-            <text x="5.5" y="519.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-455-602-26-0)" font-size="12px">
+            <text x="5.5" y="467.5">
+                - removeVersionFromBackupName(name: String): String
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-481-602-26-0)" font-size="12px">
+            <text x="5.5" y="493.5">
                 - getBackupVersion(name: String, backupType: BackupType): int
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-533-392-26-0)" font-size="12px">
-            <text x="5.5" y="545.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-507-602-26-0)" font-size="12px">
+            <text x="5.5" y="519.5">
                 - getLatestCompleteBackupVersion(): int
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-559-392-26-0)" font-size="12px">
-            <text x="5.5" y="571.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-533-602-26-0)" font-size="12px">
+            <text x="5.5" y="545.5">
                 - getLatestDifferentialBackupVersion(completeVersion: int): int
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-585-392-26-0)" font-size="12px">
-            <text x="5.5" y="597.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-559-602-26-0)" font-size="12px">
+            <text x="5.5" y="571.5">
                 - getLatestIncrementalBackupVersion(completeVersion: int): int
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-611-392-26-0)" font-size="12px">
-            <text x="5.5" y="623.5">
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-585-602-26-0)" font-size="12px">
+            <text x="5.5" y="597.5">
                 - getLatestBackupName(name: String, backupType: BackupType): String
             </text>
         </g>
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-637-392-26-0)" font-size="12px">
-            <text x="5.5" y="649.5">
-                - isIgnored(file: File): boolean
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-4-611-602-26-0)" font-size="12px">
+            <text x="5.5" y="623.5">
+                - shouldBeIgnored(file: File): boolean
             </text>
         </g>
-        <rect x="440" y="0" width="200" height="100" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <rect x="1201" y="6" width="200" height="100" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 202px; height: 100px; padding-top: 0px; margin-left: 439px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 202px; height: 100px; padding-top: 6px; margin-left: 1200px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center; width: 200px; height: 100px; overflow: hidden;">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; width: 100%; height: 100%; white-space: normal; overflow-wrap: normal;">
                                 <p style="margin:0px;margin-top:4px;text-align:center;">
@@ -232,11 +263,109 @@
                         </div>
                     </div>
                 </foreignObject>
-                <text x="540" y="54" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                <text x="1301" y="60" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
                     &lt;&lt;enumeration&gt;&gt;...
                 </text>
             </switch>
         </g>
+        <path d="M 720 26 L 720 0 L 1140 0 L 1140 26" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 26 L 720 112 L 1140 112 L 1140 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 26 L 1140 26" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
+            <text x="929.5" y="17.5">
+                CompleteBackup
+            </text>
+        </g>
+        <path d="M 720 30 L 1140 30" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-39-412-26-0)" font-size="12px">
+            <text x="725.5" y="51.5">
+                + CompleteBackup(sourceFolderPath: String, destinationFolderPath: String)
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-65-412-26-0)" font-size="12px">
+            <text x="725.5" y="77.5">
+                + start(): void
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-91-412-26-0)" font-size="12px">
+            <text x="725.5" y="103.5">
+                - saveModifiedFilesRecursively(folder: File): void
+            </text>
+        </g>
+        <path d="M 720 196 L 720 170 L 1140 170 L 1140 196" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 196 L 720 308 L 1140 308 L 1140 196" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 196 L 1140 196" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
+            <text x="929.5" y="187.5">
+                DifferentialBackup
+            </text>
+        </g>
+        <path d="M 720 200 L 1140 200" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-209-412-26-0)" font-size="12px">
+            <text x="725.5" y="221.5">
+                + DifferentialBackup(sourceFolderPath: String, destinationFolderPath: String)
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-235-412-26-0)" font-size="12px">
+            <text x="725.5" y="247.5">
+                + start(): void
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-261-412-26-0)" font-size="12px">
+            <text x="725.5" y="273.5">
+                - saveModifiedFilesRecursively(folder: File): void
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-287-412-26-0)" font-size="12px">
+            <text x="725.5" y="299.5">
+                - saveDeletedFilesLogRecursively(folder: File): void
+            </text>
+        </g>
+        <path d="M 720 386 L 720 360 L 1140 360 L 1140 386" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 386 L 720 550 L 1140 550 L 1140 386" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 386 L 1140 386" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" font-weight="bold" pointer-events="none" text-anchor="middle" font-size="12px">
+            <text x="929.5" y="377.5">
+                IncrementalBackup
+            </text>
+        </g>
+        <path d="M 720 390 L 1140 390" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-399-412-26-0)" font-size="12px">
+            <text x="725.5" y="411.5">
+                + IncrementalBackup(sourceFolderPath: String, destinationFolderPath: String)
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-425-412-26-0)" font-size="12px">
+            <text x="725.5" y="437.5">
+                + start(): void
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-451-412-26-0)" font-size="12px">
+            <text x="725.5" y="463.5">
+                - saveModifiedFilesRecursively(folder: File): void
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-477-412-26-0)" font-size="12px">
+            <text x="725.5" y="489.5">
+                - getDeletedFiles(): List&lt;String&gt;
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-503-412-26-0)" font-size="12px">
+            <text x="725.5" y="515.5">
+                - getDeletedFilesFromPreviousBackup(folder: File): List&lt;String&gt;
+            </text>
+        </g>
+        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none" clip-path="url(#mx-clip-724-529-412-26-0)" font-size="12px">
+            <text x="725.5" y="541.5">
+                - clearDeletedFilesList(list: List&lt;String&gt;): void
+            </text>
+        </g>
+        <path d="M 720 50.96 L 690 50.24 Q 680 50 680 60 L 680 300 Q 680 310 670 310.16 L 628.12 310.83" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 611.12 311.1 L 627.98 302.33 L 628.25 319.33 Z" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 239 L 690 239 Q 680 239 680 249 L 680 300 Q 680 310 670 310.16 L 628.12 310.83" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 611.12 311.1 L 627.98 302.33 L 628.25 319.33 Z" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 720 459.2 L 690 459.8 Q 680 460 680 450 L 680 320 Q 680 310 670 310.16 L 628.12 310.83" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 611.12 311.1 L 627.98 302.33 L 628.25 319.33 Z" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
     </g>
     <switch>
         <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
