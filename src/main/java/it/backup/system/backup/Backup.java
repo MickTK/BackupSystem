@@ -7,8 +7,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,15 +18,16 @@ public class Backup {
     /* Macros */
     public final String DELETED_FILES_FILE_NAME = "_deleted_._files_"; // Nome del file che tiene traccia dei file eliminati
     public final String REGEX = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Esempio: "Nome backup (b.1.2.3)"
+    public final String BACKUP_NAME = "%s (b.%d.%d.%d)"; // Nome (b.1.2.3)
 
     /* Attributes */
-    private BackupType backupType; // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
+    BackupType backupType; // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
 
-    File sourceFolder;         // Cartella da salvare
+    File sourceFolder;         // Cartella sorgente da salvare
     File backupFolder;         // Cartella del backup corrente
-    File previousBackupFolder; // Ultimo backup effettuato
-    File destinationFolder;    // Cartella di destinazione
-    private File deletedFilesFile;     // File che tiene traccia dei file eliminati rispetto al backup completo
+    File previousBackupFolder; // Cartella dell'ultimo backup effettuato (usata per i confronti)
+    File destinationFolder;    // Cartella di destinazione (dove è contenuta la cartella di backup)
+    File deletedFilesFile;     // File che tiene traccia dei file eliminati
 
     /**
      * Costruttore
@@ -50,18 +49,6 @@ public class Backup {
         this.backupType = type;
     }
 
-    public Backup(String sourceFolderPath, String destinationFolderPath) throws Exception {
-        sourceFolder = new File(sourceFolderPath);
-        if (!sourceFolder.exists() || !sourceFolder.isDirectory())
-            throw new Exception(sourceFolderPath + " does not exists or it is not a directory.");
-        this.destinationFolder = new File(destinationFolderPath);
-        if (!destinationFolder.exists() || !destinationFolder.isDirectory())
-            throw new Exception(destinationFolderPath + " does not exists or it is not a directory.");
-        this.backupFolder = null;
-        this.previousBackupFolder = null;
-        this.deletedFilesFile = null;
-    }
-
     /* Backup */
 
     /**
@@ -71,7 +58,6 @@ public class Backup {
     public void start() throws Exception { }
 
     /* Deleted files file */
-
     void createDeletedFilesFile(){
         try {
             deletedFilesFile = new File(Utils.combine(backupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
@@ -91,22 +77,25 @@ public class Backup {
         }
         catch(Exception e){e.printStackTrace();}
     }
-    void writeOnDeletedFilesFile(List<String> list){
-        try {
-            String f = String.join("\n", list);
-            Files.write(
-                    deletedFilesFile.toPath(),
-                    f.getBytes(),
-                    StandardOpenOption.APPEND
-            );
+    void saveDeletedFilesOnLog(List<String> list){
+        if (list.size() > 0) {
+            createDeletedFilesFile();
+            try {
+                String f = String.join("\n", list);
+                Files.write(
+                        deletedFilesFile.toPath(),
+                        f.getBytes(),
+                        StandardOpenOption.APPEND
+                );
+            }
+            catch(Exception e){e.printStackTrace();}
         }
-        catch(Exception e){e.printStackTrace();}
     }
 
     /* Utils */
 
     String backupNameBuilder(String name, int completeVersion, int differentialVersion, int incrementalVersion){
-        return String.format("%s (b.%d.%d.%d)", getBackupName(name), completeVersion, differentialVersion, incrementalVersion);
+        return String.format(BACKUP_NAME, removeVersionFromBackupName(name), completeVersion, differentialVersion, incrementalVersion);
     }
 
     /**
@@ -139,7 +128,7 @@ public class Backup {
                 throw new ExceptionInInitializerError("Attribute \"type\" is null.");
         }
 
-        return String.format("%s (b.%d.%d.%d)", getBackupName(name), completeVersion, differentialVersion, incrementalVersion);
+        return String.format(BACKUP_NAME, removeVersionFromBackupName(name), completeVersion, differentialVersion, incrementalVersion);
     }
 
     /**
@@ -147,7 +136,7 @@ public class Backup {
      * @param name nome completo del backup (con versione)
      * @return nome del backup (senza versione)
      */
-    private String getBackupName(String name){
+    private String removeVersionFromBackupName(String name){
         Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(name);
 
@@ -289,7 +278,7 @@ public class Backup {
         if (completeVersion < 1)
             return null;
         else
-            return String.format("%s (b.%d.%d.%d)", name, completeVersion, differentialVersion, incrementalVersion);
+            return String.format(BACKUP_NAME, name, completeVersion, differentialVersion, incrementalVersion);
     }
 
     /**
@@ -297,9 +286,13 @@ public class Backup {
      * @param file file da controllare
      * @return true se il file è da ignorare, altrimenti false
      */
-    boolean isIgnored(@NotNull File file){
-        return file.getName().equals(DELETED_FILES_FILE_NAME);
+    boolean shouldBeIgnored(@NotNull File file){
+        List<String> toBeIgnored = new ArrayList<>();
+        toBeIgnored.add(DELETED_FILES_FILE_NAME);
+        return toBeIgnored.contains(file.getName());
     }
+
+    // Work in progress
 
     /**
      * Crea un file compresso della cartella sorgente nella cartella di destinazione

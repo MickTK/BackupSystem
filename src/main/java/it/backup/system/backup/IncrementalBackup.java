@@ -24,12 +24,11 @@ public class IncrementalBackup extends Backup {
         previousBackupFolder = new File(Utils.combine(destinationFolder.getAbsolutePath(), temp));
         if (previousBackupFolder.exists() && previousBackupFolder.isDirectory()){
             backupFolder = new File(Utils.combine(
-                    destinationFolder.getAbsolutePath(),
-                    backupNameBuilder(temp))
+                    destinationFolder.getAbsolutePath(), backupNameBuilder(temp))
             );
             if (backupFolder.mkdir()){
-                startIncremental(sourceFolder);
-                saveDeletedFilesOnLog(getAllDeletedFilesInIncrementals());
+                saveModifiedFilesRecursively(sourceFolder);
+                saveDeletedFilesOnLog(getDeletedFiles());
                 /*if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
                         backupFolder.delete();*/
             }
@@ -41,12 +40,12 @@ public class IncrementalBackup extends Backup {
      * Effettua un backup incrementale (il metodo è ricorsivo)
      * @param folder cartella corrente
      */
-    private void startIncremental(@NotNull File folder) {
+    private void saveModifiedFilesRecursively(@NotNull File folder) {
         if (folder.isDirectory()) {
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (isIgnored(file)) continue;
+                    if (shouldBeIgnored(file)) continue;
 
                     // Cerchiamo il file nella cartella dell'ultimo backup
                     File previousFile = new File(file.getAbsolutePath().replace(
@@ -69,7 +68,7 @@ public class IncrementalBackup extends Backup {
                             }
                         }
                         else if (file.isDirectory()){
-                            startIncremental(file);
+                            saveModifiedFilesRecursively(file);
                         }
                     }
                     catch (Exception e){e.printStackTrace();}
@@ -82,7 +81,7 @@ public class IncrementalBackup extends Backup {
      * Ottiene i file eliminati da salvare con il backup incrementale corrente
      * @return lista di nomi di file (percorso relativo)
      */
-    private List<String> getAllDeletedFilesInIncrementals(){
+    private List<String> getDeletedFiles(){
         String firstBackupFolderName, previousBackupFolderName;
         int currentIncrementalVersion;
         List<String> deletedFiles = new ArrayList<>();
@@ -98,8 +97,8 @@ public class IncrementalBackup extends Backup {
         // Itera su ogni backup incrementale effettuato tra il corrente e quello completo
         while (currentIncrementalVersion < getBackupVersion(backupFolder.getName(), BackupType.Incremental)){
             previousBackupFolder = new File(backupFolder.getAbsolutePath().replace(backupFolder.getName(), previousBackupFolderName));
-            deletedFiles.addAll(startIncrementalDeleted(previousBackupFolder)); // Aggiunge i file che non trova
-            deleteDeletedCopies(deletedFiles); // Rimuove i file che sono già stati eliminati
+            deletedFiles.addAll(getDeletedFilesFromPreviousBackup(previousBackupFolder)); // Aggiunge i file che non trova
+            clearDeletedFilesList(deletedFiles); // Rimuove i file che sono già stati eliminati
             currentIncrementalVersion++;
             previousBackupFolderName = backupNameBuilder(
                     sourceFolder.getName(),
@@ -115,7 +114,7 @@ public class IncrementalBackup extends Backup {
      * Cancella le copie di file eliminati (presenti nella lista) con lo stesso nome
      * @param list lista aggiornata
      */
-    private void deleteDeletedCopies(List<String> list){
+    private void clearDeletedFilesList(List<String> list){
         List<String> comp = new ArrayList<>();
         File delFile = new File(Utils.combine(previousBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
 
@@ -147,13 +146,13 @@ public class IncrementalBackup extends Backup {
      * @param folder cartella del backup incrementale
      * @return lista dei nomi dei file non presenti nella sorgente (con percorso relativo)
      */
-    private List<String> startIncrementalDeleted(@NotNull File folder){
+    private List<String> getDeletedFilesFromPreviousBackup(@NotNull File folder){
         List<String> deleted = new ArrayList<>();
         if (folder.isDirectory()) {
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (isIgnored(file)) continue;
+                    if (shouldBeIgnored(file)) continue;
 
                     // Viene cercato il file nella cartella sorgente
                     File sourceFile = new File(file.getAbsolutePath().replace(
@@ -168,7 +167,7 @@ public class IncrementalBackup extends Backup {
                     // Se il file non è stato rimosso ed è una cartella
                     else if (file.isDirectory()){
                         // Itera sul contenuto della cartella
-                        deleted.addAll(startIncrementalDeleted(file));
+                        deleted.addAll(getDeletedFilesFromPreviousBackup(file));
                     }
                 }
             }

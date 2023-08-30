@@ -58,7 +58,7 @@ public class DifferentialBackup extends Backup {
             File[] sourceFiles = folder.listFiles();
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
-                    if (isIgnored(sourceFile)) continue;
+                    if (shouldBeIgnored(sourceFile)) continue;
                     // Cerchiamo il file nella cartella dell'ultimo backup effettuato
                     File previousFile = new File(sourceFile.getAbsolutePath().replace(
                             sourceFolder.getAbsolutePath(),
@@ -98,7 +98,7 @@ public class DifferentialBackup extends Backup {
             File[] files = folder.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (isIgnored(file)) continue;
+                    if (shouldBeIgnored(file)) continue;
 
                     // Viene cercato il file nella cartella sorgente
                     File sourceFile = new File(file.getAbsolutePath().replace(
@@ -119,5 +119,4 @@ public class DifferentialBackup extends Backup {
             }
         }
     }
-
 }
