@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class IncrementalBackup extends Backup {
 
@@ -26,11 +28,10 @@ public class IncrementalBackup extends Backup {
                     backupNameBuilder(temp))
             );
             if (backupFolder.mkdir()){
-                createDeletedFilesFile();
                 startIncremental(sourceFolder);
-                writeOnDeletedFilesFile(getAllDeletedFilesInIncrementals());
-                        /*if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
-                            backupFolder.delete();*/
+                saveDeletedFilesOnLog(getAllDeletedFilesInIncrementals());
+                /*if(Utils.numberOfFiles(backupFolder) == 0 && Utils.numberOfFolders(backupFolder) == 0)
+                        backupFolder.delete();*/
             }
         }
         else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
@@ -94,6 +95,7 @@ public class IncrementalBackup extends Backup {
                 getBackupVersion(firstBackupFolderName, BackupType.Differential),
                 currentIncrementalVersion
         );
+        // Itera su ogni backup incrementale effettuato tra il corrente e quello completo
         while (currentIncrementalVersion < getBackupVersion(backupFolder.getName(), BackupType.Incremental)){
             previousBackupFolder = new File(backupFolder.getAbsolutePath().replace(backupFolder.getName(), previousBackupFolderName));
             deletedFiles.addAll(startIncrementalDeleted(previousBackupFolder)); // Aggiunge i file che non trova
@@ -116,6 +118,8 @@ public class IncrementalBackup extends Backup {
     private void deleteDeletedCopies(List<String> list){
         List<String> comp = new ArrayList<>();
         File delFile = new File(Utils.combine(previousBackupFolder.getAbsolutePath(), DELETED_FILES_FILE_NAME));
+
+        // Legge e salva tutti i percorsi dei file eliminati presenti su file
         if (delFile.exists() && delFile.isFile()){
             try(BufferedReader br = new BufferedReader(new FileReader(delFile))) {
                 String line = br.readLine();
@@ -126,7 +130,16 @@ public class IncrementalBackup extends Backup {
             }
             catch (Exception e) { e.printStackTrace(); }
         }
+
+        // Rimuove i file già precedentemente eliminati
         list.removeAll(comp);
+        // Rimuove i file già precedentemente eliminati se il percorso corrisponde ad uno di quelli precedenti
+        for (String c : comp){
+            list.removeIf(s -> s.startsWith(c + "/"));
+        }
+        // Rimuove i duplicati
+        Set<String> uniqueStrings = new HashSet<>(list);
+        list = new ArrayList<>(uniqueStrings);
     }
 
     /**
