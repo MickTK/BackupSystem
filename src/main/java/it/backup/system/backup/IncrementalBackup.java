@@ -65,6 +65,7 @@ public class IncrementalBackup extends Backup {
                                 if(!destinationFile.getParentFile().exists())
                                     destinationFile.getParentFile().mkdirs();
                                 Files.copy(file.toPath(), destinationFile.toPath());
+                                writeOnLogFile(destinationFile, backupFolder);
                             }
                         }
                         else if (file.isDirectory()){

@@ -29,6 +29,10 @@ public class Backup {
     File destinationFolder;    // Cartella di destinazione (dove è contenuta la cartella di backup)
     File deletedFilesFile;     // File che tiene traccia dei file eliminati
 
+    /* Backup log */
+    public final String LOG_FILE_NAME = "backup.log";
+    File logFile;
+
     /**
      * Costruttore
      * @param sourceFolderPath cartella da salvare
@@ -91,6 +95,67 @@ public class Backup {
             catch(Exception e){e.printStackTrace();}
         }
     }
+
+
+    void writeOnLogFile(File file, File f){
+        String path = file.getAbsolutePath().replace(f.getAbsolutePath(), "");
+        long size = file.length();
+        int s = 0;
+        String ss;
+
+        if (size < 1000) {
+            s = (int)size;
+            ss = "B";
+        }
+        else {
+            size = (int) (size / 1000);
+            if (size < 1000) {
+                s = (int)size;
+                ss = "KB";
+            }
+            else {
+                size = (int) (size / 1000);
+                if (size < 1000) {
+                    s = (int)size;
+                    ss = "MB";
+                }
+                else {
+                    size = (int) (size / 1000);
+                    if (size < 1000) {
+                        s = (int)size;
+                        ss = "GB";
+                    }
+                    else {
+                        size = (int) (size / 1000);
+                        s = (int)size;
+                        ss = "TB";
+                    }
+                }
+            }
+        }
+        writeOnLogFile(
+                String.format("(%d%s) %s\n", s, ss, path)
+        );
+    }
+    void writeOnLogFile(String text){
+        if (logFile == null) {
+            try {
+                logFile = new File(Utils.combine(backupFolder.getAbsolutePath(), LOG_FILE_NAME));
+                if (!logFile.exists())
+                    logFile.createNewFile();
+            }
+            catch(Exception e){e.printStackTrace();}
+        }
+        try {
+            Files.write(
+                    logFile.toPath(),
+                    text.getBytes(),
+                    StandardOpenOption.APPEND
+            );
+        }
+        catch(Exception e){e.printStackTrace();}
+    }
+
 
     /* Utils */
 
@@ -289,6 +354,7 @@ public class Backup {
     boolean shouldBeIgnored(@NotNull File file){
         List<String> toBeIgnored = new ArrayList<>();
         toBeIgnored.add(DELETED_FILES_FILE_NAME);
+        toBeIgnored.add(LOG_FILE_NAME);
         return toBeIgnored.contains(file.getName());
     }
 

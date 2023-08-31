@@ -77,6 +77,7 @@ public class DifferentialBackup extends Backup {
                                 if(!destinationFile.getParentFile().exists())
                                     destinationFile.getParentFile().mkdirs();
                                 Files.copy(sourceFile.toPath(), destinationFile.toPath());
+                                writeOnLogFile(destinationFile, backupFolder);
                             }
                         }
                         else if (sourceFile.isDirectory()){
