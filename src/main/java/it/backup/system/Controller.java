@@ -6,8 +6,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -27,6 +28,9 @@ public class Controller {
     @FXML private Button chooseSourcePath;
     @FXML private Button chooseDestinationPath;
     @FXML private Button processButton;
+
+    // Progress bar
+    @FXML private ProgressBar progressBar;
 
     Backup backup;
     private File source;

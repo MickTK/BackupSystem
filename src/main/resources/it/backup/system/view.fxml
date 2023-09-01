@@ -2,42 +2,132 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<VBox alignment="TOP_CENTER" prefHeight="450.0" prefWidth="482.0" spacing="20.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.backup.system.Controller">
+<VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.backup.system.Controller">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <AnchorPane prefHeight="6.0" prefWidth="448.0">
+   <AnchorPane prefHeight="200.0" prefWidth="200.0">
       <children>
-         <Label layoutX="200.0" layoutY="-7.0" prefHeight="24.0" prefWidth="49.0" text="Backup" />
-         <RadioButton fx:id="completeButton" layoutY="27.0" mnemonicParsing="false" text="Completo" />
-         <RadioButton fx:id="differentialButton" layoutX="171.0" layoutY="27.0" mnemonicParsing="false" text="Differenziale" />
-         <RadioButton fx:id="incrementalButton" layoutX="337.0" layoutY="27.0" mnemonicParsing="false" text="Incrementale" />
+         <AnchorPane layoutX="-1.0" layoutY="-7.0" prefHeight="25.0" prefWidth="459.0">
+            <children>
+               <ChoiceBox layoutY="1.0" prefHeight="24.0" prefWidth="237.0" />
+               <Button fx:id="chooseSourcePath1" layoutX="236.0" layoutY="1.0" mnemonicParsing="false" text="+" />
+               <Button fx:id="processButton" layoutX="306.0" layoutY="1.0" mnemonicParsing="false" text="Salva/Avvia" />
+               <Button fx:id="processButton11" layoutX="413.0" layoutY="1.0" mnemonicParsing="false" text="Elimina" />
+            </children>
+         </AnchorPane>
+         <AnchorPane layoutY="42.0" prefHeight="25.0" prefWidth="459.0">
+            <children>
+               <Label layoutY="-3.0" prefHeight="24.0" prefWidth="111.0" text="Tipo di backup:" />
+               <RadioButton fx:id="completeButton" layoutX="113.0" mnemonicParsing="false" selected="true" text="Completo" />
+               <RadioButton fx:id="differentialButton" layoutX="228.0" mnemonicParsing="false" text="Differenziale" />
+               <RadioButton fx:id="incrementalButton" layoutX="348.0" mnemonicParsing="false" text="Incrementale" />
+            </children>
+         </AnchorPane>
+         <AnchorPane layoutX="1.0" layoutY="73.0" prefHeight="40.0" prefWidth="255.0">
+            <children>
+            
+                                        <Label fx:id="welcomeText" text="Percorso da salvare:" />
+               <TextField fx:id="sourceInput" layoutX="140.0" layoutY="-4.0" prefHeight="24.0" prefWidth="286.0" />
+             <Button fx:id="chooseSourcePath" layoutX="426.0" layoutY="-4.0" mnemonicParsing="false" text="..." />
+            </children>
+         </AnchorPane>
+         <AnchorPane layoutX="2.0" layoutY="103.0">
+            <children>
+               <Label fx:id="welcomeText1" layoutX="-1.0" text="Percorso di destinazione:" />
+               <TextField fx:id="destinationInput" layoutX="172.0" layoutY="-4.0" prefHeight="24.0" prefWidth="254.0" />
+               <Button fx:id="chooseDestinationPath" layoutX="426.0" layoutY="-4.0" mnemonicParsing="false" text="..." />
+            </children>
+         </AnchorPane>
+         <AnchorPane layoutY="141.0" prefHeight="398.0" prefWidth="478.0">
+            <children>
+               <Label alignment="CENTER" layoutX="183.0" prefHeight="24.0" prefWidth="103.0" text="Pianificazione" textAlignment="CENTER" />
+               <RadioButton layoutX="5.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="Nessuna" />
+               <Line endX="100.0" layoutX="106.0" layoutY="65.0" startX="-100.0" />
+               <RadioButton layoutX="5.0" layoutY="79.0" mnemonicParsing="false" text="Settimanale" />
+               <AnchorPane layoutX="-1.0" layoutY="104.0" prefHeight="48.0" prefWidth="479.0">
+                  <children>
+                     <CheckBox layoutX="67.0" layoutY="2.0" mnemonicParsing="false" text="Lunedì" />
+                     <CheckBox layoutX="150.0" layoutY="2.0" mnemonicParsing="false" text="Martedì" />
+                     <CheckBox layoutX="240.0" layoutY="2.0" mnemonicParsing="false" text="Mercoledì" />
+                     <CheckBox layoutX="340.0" layoutY="2.0" mnemonicParsing="false" text="Giovedì" />
+                     <CheckBox layoutX="99.0" layoutY="28.0" mnemonicParsing="false" text="Venerdì" />
+                     <CheckBox layoutX="187.0" layoutY="28.0" mnemonicParsing="false" text="Sabato" />
+                     <CheckBox layoutX="270.0" layoutY="28.0" mnemonicParsing="false" text="Domenica" />
+                  </children>
+               </AnchorPane>
+               <Line endX="100.0" layoutX="105.0" layoutY="158.0" startX="-100.0" />
+               <RadioButton layoutX="6.0" layoutY="174.0" mnemonicParsing="false" text="Mensile" />
+               <GridPane layoutX="7.0" layoutY="202.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="120.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                     <CheckBox mnemonicParsing="false" text="1" />
+                     <CheckBox mnemonicParsing="false" text="2" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="3" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="4" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="5" GridPane.columnIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="7" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="8" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="9" GridPane.columnIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="11" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="10" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="12" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="13" GridPane.columnIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="14" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="15" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="16" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="17" GridPane.columnIndex="4" />
+                     <CheckBox mnemonicParsing="false" text="18" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="19" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="20" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="21" GridPane.columnIndex="5" />
+                     <CheckBox mnemonicParsing="false" text="22" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="23" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="24" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="25" GridPane.columnIndex="6" />
+                     <CheckBox mnemonicParsing="false" text="26" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="27" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="28" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+                     <CheckBox mnemonicParsing="false" text="29" GridPane.columnIndex="7" />
+                     <CheckBox mnemonicParsing="false" text="30" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+                     <CheckBox mnemonicParsing="false" text="31" GridPane.columnIndex="7" GridPane.rowIndex="2" />
+                     <CheckBox mnemonicParsing="false" text="Ultimo giorno" GridPane.columnIndex="7" GridPane.rowIndex="3" />
+                  </children>
+               </GridPane>
+               <TextArea fx:id="consoleLog" editable="false" layoutX="-1.0" layoutY="338.0" prefHeight="38.0" prefWidth="479.0" />
+               <ProgressBar fx:id="progressBar" layoutX="-1.0" layoutY="376.0" prefHeight="20.0" prefWidth="478.0" progress="0.0" />
+            </children>
+         </AnchorPane>
       </children>
    </AnchorPane>
-   <Line endX="100.0" startX="-100.0" />
-   <AnchorPane prefHeight="40.0" prefWidth="255.0">
-      <children>
-      
-          <Label fx:id="welcomeText" text="Origine:" />
-         <TextField fx:id="sourceInput" layoutY="16.0" prefHeight="24.0" prefWidth="410.0" />
-       <Button fx:id="chooseSourcePath" layoutX="411.0" layoutY="16.0" mnemonicParsing="false" text="..." />
-      </children>
-   </AnchorPane>
-   <AnchorPane layoutX="30.0" layoutY="30.0">
-      <children>
-         <Label fx:id="welcomeText1" text="Destinazione:" />
-         <TextField fx:id="destinationInput" layoutY="16.0" prefHeight="24.0" prefWidth="410.0" />
-         <Button fx:id="chooseDestinationPath" layoutX="410.0" layoutY="16.0" mnemonicParsing="false" text="..." />
-      </children>
-   </AnchorPane>
-   <Button fx:id="processButton" mnemonicParsing="false" text="Processa" />
-   <TextArea fx:id="consoleLog" editable="false" prefHeight="396.0" prefWidth="442.0" />
 </VBox>
