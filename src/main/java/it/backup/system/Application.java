@@ -16,6 +16,7 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Backup System");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
