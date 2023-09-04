@@ -4,11 +4,7 @@ import it.backup.system.backup.*;
 import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -16,21 +12,77 @@ import java.io.File;
 
 public class Controller {
 
-    // Text fields
-    @FXML private TextField sourceInput;
-    @FXML private TextField destinationInput;
-    @FXML private TextArea consoleLog;
+    /** Backup **/
+    @FXML private ChoiceBox configurationBox;    // Mostra il nome della configurazione corrente
+    @FXML private Button newConfigurationButton; // Aggiunge una configurazione nuova (e vuota)
+    @FXML private TextField sourceInput;      // Campo di testo contenente il percorso della cartella da salvare
+    @FXML private TextField destinationInput; // Campo di testo contente il percorso della cartella in cui salvara la precedente cartella
+    @FXML private RadioButton completeButton;     // Seleziona il tipo di backup completo
+    @FXML private RadioButton differentialButton; // Seleziona il tipo di backup differenziale
+    @FXML private RadioButton incrementalButton;  // Seleziona il tipo di backup incrementale
+    @FXML private Button chooseSourcePath;      // Seleziona il percorso della cartella sorgente
+    @FXML private Button chooseDestinationPath; // Seleziona il percorso della cartella di destinazione
 
-    // Buttons
-    @FXML private RadioButton completeButton;
-    @FXML private RadioButton differentialButton;
-    @FXML private RadioButton incrementalButton;
-    @FXML private Button chooseSourcePath;
-    @FXML private Button chooseDestinationPath;
-    @FXML private Button processButton;
+    /** Pianificazione **/
+    @FXML private RadioButton noneButton;    // Seleziona la pianificazione nulla
+    @FXML private RadioButton weeklyButton;  // Seleziona la pianificazione settimanale
+    @FXML private RadioButton monthlyButton; // Seleziona la pianificazione mensile
+    // Giorni della settimana
+    @FXML private CheckBox sundayCheck;    // Seleziona la domenica come giorno di backup
+    @FXML private CheckBox mondayCheck;    // Seleziona il lunedì come giorno di backup
+    @FXML private CheckBox tuesdayCheck;   // Seleziona il martedì come giorno di backup
+    @FXML private CheckBox wednesdayCheck; // Seleziona il mercoledì come giorno di backup
+    @FXML private CheckBox thursdayCheck;  // Seleziona il giovedì come giorno di backup
+    @FXML private CheckBox fridayCheck;    // Seleziona il venerdì come giorno di backup
+    @FXML private CheckBox saturdayCheck;  // Seleziona il sabato come giorno di backup
+    // Giorni del mese
+    @FXML private CheckBox day1Check;
+    @FXML private CheckBox day2Check;
+    @FXML private CheckBox day3Check;
+    @FXML private CheckBox day4Check;
+    @FXML private CheckBox day5Check;
+    @FXML private CheckBox day6Check;
+    @FXML private CheckBox day7Check;
+    @FXML private CheckBox day8Check;
+    @FXML private CheckBox day9Check;
+    @FXML private CheckBox day10Check;
+    @FXML private CheckBox day11Check;
+    @FXML private CheckBox day12Check;
+    @FXML private CheckBox day13Check;
+    @FXML private CheckBox day14Check;
+    @FXML private CheckBox day15Check;
+    @FXML private CheckBox day16Check;
+    @FXML private CheckBox day17Check;
+    @FXML private CheckBox day18Check;
+    @FXML private CheckBox day19Check;
+    @FXML private CheckBox day20Check;
+    @FXML private CheckBox day21Check;
+    @FXML private CheckBox day22Check;
+    @FXML private CheckBox day23Check;
+    @FXML private CheckBox day24Check;
+    @FXML private CheckBox day25Check;
+    @FXML private CheckBox day26Check;
+    @FXML private CheckBox day27Check;
+    @FXML private CheckBox day28Check;
+    @FXML private CheckBox day29Check;
+    @FXML private CheckBox day30Check;
+    @FXML private CheckBox day31Check;
+    @FXML private CheckBox day32Check;
+    // Orari settimanali
+    @FXML private Button plusWeeklyButton;
+    @FXML private Button minusWeeklyButton;
+    @FXML private TextField timeWeeklyField;
+    @FXML private ListView<String> timesWeeklyField;
+    // Orari mensili
+    @FXML private Button plusMonthlyButton;
+    @FXML private Button minusMonthlyButton;
+    @FXML private TextField timeMonthlyField;
+    @FXML private ListView<String> timesMonthlyField;
 
-    // Progress bar
-    @FXML private ProgressBar progressBar;
+    /** Altro **/
+    @FXML private TextArea consoleLog; // Area di testo che conterrà i messaggi visualizzabili a schermo
+    @FXML private ProgressBar progressBar; // Barra che mostra il progresso dell'operazione in corso
+    @FXML private Button processButton; // Pulsante che effettua o salva le informazioni correnti
 
     Backup backup;
     private File source;
