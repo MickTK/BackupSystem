@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <VBox alignment="TOP_CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.backup.system.Controller">
     <padding>
@@ -150,21 +151,25 @@
                      </GridPane>
                   </children>
                </AnchorPane>
-               <AnchorPane layoutX="152.0" layoutY="257.0">
+               <AnchorPane layoutX="169.0" layoutY="257.0">
                   <children>
-                     <TextField alignment="CENTER" layoutX="35.0" prefHeight="24.0" prefWidth="75.0" text="00:00" />
-                     <ListView fx:id="timesWeeklyField" layoutX="33.0" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
-                     <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="29.0" text="+" />
-                     <Button layoutX="116.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="29.0" text="-" />
+                     <TextField fx:id="timeHourWeeklyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                     <TextField fx:id="timeMinuteWeeklyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                     <ListView fx:id="timesWeeklyField" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
+                     <Button fx:id="plusWeeklyButton" layoutX="81.0" layoutY="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="+" />
+                     <Button fx:id="minusWeeklyButton" layoutX="81.0" layoutY="56.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="-" />
+                     <Text layoutX="37.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
                   </children>
                </AnchorPane>
                <Line endX="-3.0" endY="223.0" layoutX="350.0" layoutY="155.0" startX="-3.0" startY="-123.0" />
-               <AnchorPane layoutX="481.0" layoutY="257.0">
+               <AnchorPane layoutX="497.0" layoutY="257.0">
                   <children>
-                     <TextField alignment="CENTER" layoutX="35.0" prefHeight="24.0" prefWidth="75.0" text="00:00" />
-                     <ListView layoutX="33.0" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
-                     <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="29.0" text="+" />
-                     <Button layoutX="116.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="29.0" text="-" />
+                     <TextField fx:id="timeHourMonthlyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                     <TextField fx:id="timeMinuteMonthlyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                     <ListView fx:id="timesMonthlyField" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
+                     <Button fx:id="plusMonthlyButton" layoutX="81.0" layoutY="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="+" />
+                     <Button fx:id="minusMonthlyButton" layoutX="81.0" layoutY="56.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="-" />
+                     <Text layoutX="37.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
                   </children>
                </AnchorPane>
             </children>
@@ -173,10 +178,11 @@
    </AnchorPane>
    <AnchorPane prefHeight="111.0" prefWidth="479.0">
       <children>
-         <Button fx:id="processButton" layoutX="664.0" layoutY="97.0" mnemonicParsing="false" text="Salva/Avvia" />
-         <Button fx:id="processButton11" layoutX="586.0" layoutY="97.0" mnemonicParsing="false" text="Elimina" />
+         <Button fx:id="saveButton" layoutX="550.0" layoutY="95.0" mnemonicParsing="false" text="Salva" />
+         <Button fx:id="deleteButton" layoutX="678.0" layoutY="95.0" mnemonicParsing="false" text="Elimina" />
          <TextArea fx:id="consoleLog" editable="false" layoutX="1.0" prefHeight="62.0" prefWidth="757.0" />
          <ProgressBar fx:id="progressBar" layoutX="1.0" layoutY="62.0" prefHeight="20.0" prefWidth="757.0" progress="0.0" />
+         <Button fx:id="startButton" layoutX="614.0" layoutY="95.0" mnemonicParsing="false" text="Avvia" />
       </children>
    </AnchorPane>
 </VBox>

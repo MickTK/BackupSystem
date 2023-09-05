@@ -358,6 +358,14 @@ public class Backup {
         return toBeIgnored.contains(file.getName());
     }
 
+    /**
+     * Ottiene il nome della cartella sorgente
+     * @return nome della cartella sorgente
+     */
+    public String name(){
+        return sourceFolder.getName();
+    }
+
     // Work in progress
 
     /**
