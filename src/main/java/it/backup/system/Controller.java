@@ -1,29 +1,32 @@
 package it.backup.system;
 
 import it.backup.system.backup.*;
-import it.backup.system.scheduler.Schedule;
-import it.backup.system.scheduler.ScheduleType;
+import it.backup.system.scheduler.*;
 import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
 public class Controller {
 
     Schedule currentSchedule;
+    BackupType backupType;
     ScheduleType scheduleType;
 
     /** Backup **/
     @FXML private ChoiceBox<String> configurationBox;    // Mostra il nome della configurazione corrente
     @FXML private Button newConfigurationButton; // Aggiunge una configurazione nuova (e vuota)
-    @FXML private TextField sourceInput;      // Campo di testo contenente il percorso della cartella da salvare
-    @FXML private TextField destinationInput; // Campo di testo contente il percorso della cartella in cui salvara la precedente cartella
+    @FXML private TextField sourcePath;      // Campo di testo contenente il percorso della cartella da salvare
+    @FXML private TextField destinationPath; // Campo di testo contente il percorso della cartella in cui salvara la precedente cartella
     @FXML private RadioButton completeButton;     // Seleziona il tipo di backup completo
     @FXML private RadioButton differentialButton; // Seleziona il tipo di backup differenziale
     @FXML private RadioButton incrementalButton;  // Seleziona il tipo di backup incrementale
@@ -34,6 +37,10 @@ public class Controller {
     @FXML private RadioButton noneButton;    // Seleziona la pianificazione nulla
     @FXML private RadioButton weeklyButton;  // Seleziona la pianificazione settimanale
     @FXML private RadioButton monthlyButton; // Seleziona la pianificazione mensile
+    @FXML private GridPane weeklyGrid;
+    @FXML private GridPane monthlyGrid;
+    @FXML private AnchorPane weeklyPane;
+    @FXML private AnchorPane monthlyPane;
     // Giorni della settimana
     private List<CheckBox> weekDays;
     @FXML private CheckBox sundayCheck;    // Seleziona la domenica come giorno di backup
@@ -117,16 +124,28 @@ public class Controller {
         });
         // Selezione tipo di backup
         completeButton.setOnAction(event -> {
-            differentialButton.setSelected(false);
-            incrementalButton.setSelected(false);
+            if (completeButton.isSelected()) {
+                differentialButton.setSelected(false);
+                incrementalButton.setSelected(false);
+            }
+            else
+                completeButton.setSelected(true);
         });
         differentialButton.setOnAction(event -> {
-            completeButton.setSelected(false);
-            incrementalButton.setSelected(false);
+            if (differentialButton.isSelected()) {
+                completeButton.setSelected(false);
+                incrementalButton.setSelected(false);
+            }
+            else
+                differentialButton.setSelected(true);
         });
         incrementalButton.setOnAction(event -> {
-            differentialButton.setSelected(false);
-            completeButton.setSelected(false);
+            if (incrementalButton.isSelected()) {
+                differentialButton.setSelected(false);
+                completeButton.setSelected(false);
+            }
+            else
+                incrementalButton.setSelected(true);
         });
         // Selezione percorso della cartella da salvare
         chooseSourcePath.setOnAction(this::selectSourcePath);
@@ -135,19 +154,50 @@ public class Controller {
 
         /** Pianificazione **/
         noneButton.setOnAction(event -> {
-            weeklyButton.setSelected(false);
-            monthlyButton.setSelected(false);
-            scheduleType = ScheduleType.None;
+            if (noneButton.isSelected()) {
+                // Imposta il tipo di pianificazione
+                scheduleType = ScheduleType.None;
+                // Modifica lo stato degli altri bottoni
+                weeklyButton.setSelected(false);
+                monthlyButton.setSelected(false);
+                // Modifica la visibilità dei pannelli di pianificazione
+                weeklyGrid.setDisable(true);
+                weeklyPane.setDisable(true);
+                monthlyGrid.setDisable(true);
+                monthlyPane.setDisable(true);
+            }
+            else {
+                // Reimposta lo stesso bottone se già selezionato
+                noneButton.setSelected(true);
+            }
         });
         weeklyButton.setOnAction(event -> {
-            noneButton.setSelected(false);
-            monthlyButton.setSelected(false);
-            scheduleType = ScheduleType.Weekly;
+            if (weeklyButton.isSelected()) {
+                scheduleType = ScheduleType.Weekly;
+                noneButton.setSelected(false);
+                monthlyButton.setSelected(false);
+                weeklyGrid.setDisable(false);
+                weeklyPane.setDisable(false);
+                monthlyGrid.setDisable(true);
+                monthlyPane.setDisable(true);
+            }
+            else {
+                weeklyButton.setSelected(true);
+            }
         });
         monthlyButton.setOnAction(event -> {
-            noneButton.setSelected(false);
-            weeklyButton.setSelected(false);
-            scheduleType = ScheduleType.Monthly;
+            if (monthlyButton.isSelected()) {
+                scheduleType = ScheduleType.Monthly;
+                noneButton.setSelected(false);
+                weeklyButton.setSelected(false);
+                weeklyGrid.setDisable(true);
+                weeklyPane.setDisable(true);
+                monthlyGrid.setDisable(false);
+                monthlyPane.setDisable(false);
+            }
+            else {
+                monthlyButton.setSelected(true);
+            }
         });
         weekDays = Arrays.asList(sundayCheck, mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck);
         monthDays = Arrays.asList(
@@ -179,17 +229,19 @@ public class Controller {
             if (s.length() > length) s = s.substring(0, length);
             // Imposta 59 come orario massimo
             else if (s.length() == length && Integer.parseInt(s) > 59) s = "59";
-            timeHourWeeklyField.setText(s);
+            timeMinuteWeeklyField.setText(s);
         });
         plusWeeklyButton.setOnAction(event -> {
+            // Aggiunge l'orario alla lista visualizzata
             String s = "";
             if (timeHourWeeklyField.getText().length() < 2) s += "0";
             s += timeHourWeeklyField.getText();
             s += ":";
             if (timeMinuteWeeklyField.getText().length() < 2) s += "0";
             s += timeMinuteWeeklyField.getText();
-
-            timesWeeklyField.getItems().add(s);
+            // Controlla se esiste già l'orario impostato
+            if (!timesWeeklyField.getItems().contains(s))
+                timesWeeklyField.getItems().add(s);
         });
         minusWeeklyButton.setOnAction(event -> {
             timesWeeklyField.getItems().removeAll(timesWeeklyField.getSelectionModel().getSelectedItem());
@@ -204,7 +256,7 @@ public class Controller {
             if (s.length() > 2) s = s.substring(0, 2);
                 // Imposta 23 come orario massimo
             else if (s.length() == 2 && Integer.parseInt(s) > 23) s = "23";
-            timeHourWeeklyField.setText(s);
+            timeHourMonthlyField.setText(s);
         });
         timeMinuteMonthlyField.textProperty().addListener((ov, oldValue, newValue) -> {
             String s = newValue;
@@ -214,7 +266,7 @@ public class Controller {
             if (s.length() > 2) s = s.substring(0, 2);
                 // Imposta 59 come orario massimo
             else if (s.length() == 2 && Integer.parseInt(s) > 59) s = "59";
-            timeHourWeeklyField.setText(s);
+            timeMinuteMonthlyField.setText(s);
         });
         plusMonthlyButton.setOnAction(event -> {
             String s = "";
@@ -223,14 +275,59 @@ public class Controller {
             s += ":";
             if (timeMinuteMonthlyField.getText().length() < 2) s += "0";
             s += timeMinuteMonthlyField.getText();
-
-            timesMonthlyField.getItems().add(s);
+            // Controlla se esiste già l'orario impostato
+            if (!timesMonthlyField.getItems().contains(s))
+                timesMonthlyField.getItems().add(s);
         });
         minusMonthlyButton.setOnAction(event -> {
             timesMonthlyField.getItems().removeAll(timesMonthlyField.getSelectionModel().getSelectedItem());
         });
 
-        processButton.setOnAction(this::process);
+        //processButton.setOnAction(this::process);
+        saveButton.setOnAction(event -> {
+            Schedule schedule = new Schedule(backup, scheduleType);
+            // Imposta i giorni della settimana
+            WeeklySchedule weeklySchedule = new WeeklySchedule();
+            if (sundayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Sunday);
+            if (mondayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Monday);
+            if (tuesdayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Tuesday);
+            if (wednesdayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Wednesday);
+            if (thursdayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Thursday);
+            if (fridayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Friday);
+            if (saturdayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Saturday);
+            schedule.setWeeklySchedule(weeklySchedule);
+            // Imposta gli orari dei giorni della settimana
+            for (String hour : timesWeeklyField.getItems()) {
+                weeklySchedule.clock.add(LocalTime.parse(hour));
+            }
+            // Imposta i giorni del mese
+            MonthlySchedule monthlySchedule = new MonthlySchedule();
+            for (int i = 0; i < monthDays.size(); i++) {
+                if (monthDays.get(i).isSelected()) {
+                    monthlySchedule.days.add(i+1);
+                }
+            }
+            // Imposta gli orari dei giorni del mese
+            for (String hour : timesMonthlyField.getItems()) {
+                monthlySchedule.clock.add(LocalTime.parse(hour));
+            }
+            schedule.setMonthlySchedule(monthlySchedule);
+        });
+        startButton.setOnAction(event -> {
+
+        });
+        deleteButton.setOnAction(event -> {
+            Alert errorAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            errorAlert.setHeaderText("Eliminazione pianificazione.");
+            errorAlert.setContentText(
+                "Sei sicuro di voler eliminare la pianificazione per il backup: " /*+ backup.name()*/ + "?"
+            );
+            errorAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    //
+                }
+            });
+        });
         clearPage();
     }
 
@@ -239,8 +336,8 @@ public class Controller {
         scheduleType = ScheduleType.None;
 
         configurationBox.setValue(null);
-        sourceInput.setText(null);
-        destinationInput.setText(null);
+        sourcePath.setText(null);
+        destinationPath.setText(null);
         completeButton.setSelected(true);
         differentialButton.setSelected(false);
         incrementalButton.setSelected(false);
@@ -263,7 +360,7 @@ public class Controller {
         source = directoryChooser.showDialog(primaryStage);
 
         if (Utils.isSourcePathValid(source, consoleLog)){
-            sourceInput.setText(source.getAbsolutePath());
+            sourcePath.setText(source.getAbsolutePath());
         }
         else {
             source = null;
@@ -284,7 +381,7 @@ public class Controller {
         destination = directoryChooser.showDialog(primaryStage);
 
         if (Utils.isDestinationPathValid(destination, consoleLog)) {
-            destinationInput.setText(destination.getAbsolutePath());
+            destinationPath.setText(destination.getAbsolutePath());
         }
         else {
             destination = null;
@@ -351,9 +448,9 @@ public class Controller {
     private void save(ActionEvent event) {
         switch (scheduleType) {
             case None:
-                if (currentSchedule != null)
-                    currentSchedule.
-                backup.start();
+                if (currentSchedule != null) {
+                    currentSchedule.setBackup(backup);
+                }
                 break;
             case Weekly:
                 break;

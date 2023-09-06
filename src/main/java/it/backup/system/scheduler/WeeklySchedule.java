@@ -4,8 +4,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class WeeklySchedule {
-    List<WeekDay> weekDays;
-    List<LocalTime> clock;
+    public List<WeekDay> weekDays;
+    public List<LocalTime> clock;
 
     public boolean check(){
         return false;

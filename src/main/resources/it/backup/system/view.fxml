@@ -46,14 +46,14 @@
                   <children>
                   
                                                     <Label fx:id="welcomeText" text="Percorso da salvare:" />
-                     <TextField fx:id="sourceInput" layoutX="140.0" layoutY="-4.0" prefHeight="24.0" prefWidth="287.0" />
+                     <TextField fx:id="sourcePath" layoutX="140.0" layoutY="-4.0" prefHeight="24.0" prefWidth="287.0" />
                    <Button fx:id="chooseSourcePath" layoutX="427.0" layoutY="-4.0" mnemonicParsing="false" text="..." />
                   </children>
                </AnchorPane>
                <AnchorPane layoutX="4.0" layoutY="119.0">
                   <children>
                      <Label fx:id="welcomeText1" layoutX="-1.0" text="Percorso di destinazione:" />
-                     <TextField fx:id="destinationInput" layoutX="172.0" layoutY="-4.0" prefHeight="24.0" prefWidth="254.0" />
+                     <TextField fx:id="destinationPath" layoutX="172.0" layoutY="-4.0" prefHeight="24.0" prefWidth="254.0" />
                      <Button fx:id="chooseDestinationPath" layoutX="426.0" layoutY="-4.0" mnemonicParsing="false" text="..." />
                   </children>
                </AnchorPane>
@@ -70,7 +70,7 @@
                <AnchorPane layoutX="123.0" layoutY="32.0">
                   <children>
                      <RadioButton fx:id="weeklyButton" mnemonicParsing="false" text="Settimanale" />
-                     <GridPane layoutX="24.0" layoutY="21.0">
+                     <GridPane fx:id="weeklyGrid" disable="true" layoutX="24.0" layoutY="21.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -97,7 +97,7 @@
                <AnchorPane layoutX="350.0">
                   <children>
                      <RadioButton fx:id="monthlyButton" layoutX="14.0" layoutY="34.0" mnemonicParsing="false" text="Mensile" />
-                     <GridPane layoutX="37.0" layoutY="52.0">
+                     <GridPane fx:id="monthlyGrid" disable="true" layoutX="37.0" layoutY="52.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
                          <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
@@ -151,7 +151,7 @@
                      </GridPane>
                   </children>
                </AnchorPane>
-               <AnchorPane layoutX="169.0" layoutY="257.0">
+               <AnchorPane fx:id="weeklyPane" disable="true" layoutX="169.0" layoutY="257.0">
                   <children>
                      <TextField fx:id="timeHourWeeklyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
                      <TextField fx:id="timeMinuteWeeklyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
@@ -162,7 +162,7 @@
                   </children>
                </AnchorPane>
                <Line endX="-3.0" endY="223.0" layoutX="350.0" layoutY="155.0" startX="-3.0" startY="-123.0" />
-               <AnchorPane layoutX="497.0" layoutY="257.0">
+               <AnchorPane fx:id="monthlyPane" disable="true" layoutX="497.0" layoutY="257.0">
                   <children>
                      <TextField fx:id="timeHourMonthlyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
                      <TextField fx:id="timeMinuteMonthlyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />

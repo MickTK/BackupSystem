@@ -8,6 +8,7 @@ public class Schedule {
     WeeklySchedule weeklySchedule;
     MonthlySchedule monthlySchedule;
 
+    public Schedule(){}
     public Schedule(Backup backup, ScheduleType scheduleType){
         this.backup = backup;
         this.scheduleType = scheduleType;
@@ -18,6 +19,13 @@ public class Schedule {
     }
     public void setBackup(Backup backup){
         this.backup = backup;
+    }
+
+    public ScheduleType getScheduleType() {
+        return scheduleType;
+    }
+    public void setScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = scheduleType;
     }
 
     public WeeklySchedule getWeeklySchedule() {
