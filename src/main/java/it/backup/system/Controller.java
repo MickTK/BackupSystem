@@ -21,6 +21,7 @@ public class Controller {
     Schedule currentSchedule;
     BackupType backupType;
     ScheduleType scheduleType;
+    int scheduleIndex;
 
     /** Backup **/
     @FXML private ChoiceBox<String> configurationBox;    // Mostra il nome della configurazione corrente
@@ -105,100 +106,10 @@ public class Controller {
     @FXML private Button startButton;
     @FXML private Button deleteButton;
 
-    Backup backup;
-    private File source;
-    private File destination;
-
     /**
      * Inizializza il controller
      */
     public void initialize() {
-        /** Backup **/
-        // Inizializza la lista delle pianificazioni nel check box
-        for (Schedule schedule : Application.scheduler.schedules){
-            configurationBox.getItems().add(schedule.getBackup().name());
-        }
-        // Imposta una nuova configurazione per la pianificazione
-        newConfigurationButton.setOnAction(event -> {
-            clearPage();
-        });
-        // Selezione tipo di backup
-        completeButton.setOnAction(event -> {
-            if (completeButton.isSelected()) {
-                differentialButton.setSelected(false);
-                incrementalButton.setSelected(false);
-            }
-            else
-                completeButton.setSelected(true);
-        });
-        differentialButton.setOnAction(event -> {
-            if (differentialButton.isSelected()) {
-                completeButton.setSelected(false);
-                incrementalButton.setSelected(false);
-            }
-            else
-                differentialButton.setSelected(true);
-        });
-        incrementalButton.setOnAction(event -> {
-            if (incrementalButton.isSelected()) {
-                differentialButton.setSelected(false);
-                completeButton.setSelected(false);
-            }
-            else
-                incrementalButton.setSelected(true);
-        });
-        // Selezione percorso della cartella da salvare
-        chooseSourcePath.setOnAction(this::selectSourcePath);
-        // Selezione percorso della cartella di destinazione
-        chooseDestinationPath.setOnAction(this::selectDestinationPath);
-
-        /** Pianificazione **/
-        noneButton.setOnAction(event -> {
-            if (noneButton.isSelected()) {
-                // Imposta il tipo di pianificazione
-                scheduleType = ScheduleType.None;
-                // Modifica lo stato degli altri bottoni
-                weeklyButton.setSelected(false);
-                monthlyButton.setSelected(false);
-                // Modifica la visibilità dei pannelli di pianificazione
-                weeklyGrid.setDisable(true);
-                weeklyPane.setDisable(true);
-                monthlyGrid.setDisable(true);
-                monthlyPane.setDisable(true);
-            }
-            else {
-                // Reimposta lo stesso bottone se già selezionato
-                noneButton.setSelected(true);
-            }
-        });
-        weeklyButton.setOnAction(event -> {
-            if (weeklyButton.isSelected()) {
-                scheduleType = ScheduleType.Weekly;
-                noneButton.setSelected(false);
-                monthlyButton.setSelected(false);
-                weeklyGrid.setDisable(false);
-                weeklyPane.setDisable(false);
-                monthlyGrid.setDisable(true);
-                monthlyPane.setDisable(true);
-            }
-            else {
-                weeklyButton.setSelected(true);
-            }
-        });
-        monthlyButton.setOnAction(event -> {
-            if (monthlyButton.isSelected()) {
-                scheduleType = ScheduleType.Monthly;
-                noneButton.setSelected(false);
-                weeklyButton.setSelected(false);
-                weeklyGrid.setDisable(true);
-                weeklyPane.setDisable(true);
-                monthlyGrid.setDisable(false);
-                monthlyPane.setDisable(false);
-            }
-            else {
-                monthlyButton.setSelected(true);
-            }
-        });
         weekDays = Arrays.asList(sundayCheck, mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck);
         monthDays = Arrays.asList(
                 day1Check, day2Check, day3Check, day4Check, day5Check, day6Check, day7Check,
@@ -207,6 +118,30 @@ public class Controller {
                 day22Check, day23Check, day24Check, day25Check, day26Check, day27Check, day28Check,
                 day29Check, day30Check, day31Check, day32Check
         );
+
+        setDefaultInformations();
+
+        /** Backup **/
+        // Inizializza la lista delle pianificazioni nel check box
+        refreshConfigurationBox();
+        configurationBox.setOnAction(this::setConfiguration);
+        // Imposta una nuova configurazione per la pianificazione
+        newConfigurationButton.setOnAction(event -> {
+            setDefaultInformations();
+        });
+        // Selezione tipo di backup
+        completeButton.setOnAction(this::setCompleteBackup);
+        differentialButton.setOnAction(this::setDifferentialBackup);
+        incrementalButton.setOnAction(this::setIncrementalBackup);
+        // Selezione percorso della cartella da salvare
+        chooseSourcePath.setOnAction(this::selectSourcePath);
+        // Selezione percorso della cartella di destinazione
+        chooseDestinationPath.setOnAction(this::selectDestinationPath);
+
+        /** Pianificazione **/
+        noneButton.setOnAction(this::setNoneSchedule);
+        weeklyButton.setOnAction(this::setWeeklySchedule);
+        monthlyButton.setOnAction(this::setMonthlySchedule);
 
         // Orario settimanale
         timeHourWeeklyField.textProperty().addListener((ov, oldValue, newValue) -> {
@@ -284,8 +219,287 @@ public class Controller {
         });
 
         //processButton.setOnAction(this::process);
-        saveButton.setOnAction(event -> {
+        saveButton.setOnAction(this::save);
+        startButton.setOnAction(this::start);
+        deleteButton.setOnAction(this::delete);
+    }
+
+    private void setDefaultInformations(){
+        currentSchedule = null;
+        scheduleIndex = -1;
+
+        configurationBox.setValue(null);
+        sourcePath.setText(null);
+        destinationPath.setText(null);
+
+        backupType = BackupType.Complete;
+        completeButton.setSelected(true);
+        differentialButton.setSelected(false);
+        incrementalButton.setSelected(false);
+
+        scheduleType = ScheduleType.None;
+        noneButton.setSelected(true);
+        weeklyButton.setSelected(false);
+        monthlyButton.setSelected(false);
+
+        for (CheckBox box : weekDays) {
+            box.setSelected(false);
+        }
+        for (CheckBox box : monthDays) {
+            box.setSelected(false);
+        }
+        timesWeeklyField.getItems().clear();
+        timesMonthlyField.getItems().clear();
+    }
+
+    /**
+     * Recupera e salva il percorso della cartella da salvare
+     * @param event
+     */
+    private void selectSourcePath(ActionEvent event){
+        Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Scegli la cartella che vuoi salvare.");
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        sourcePath.setText(directoryChooser.showDialog(primaryStage).getAbsolutePath());
+    }
+
+    /**
+     * Recupera e salva il percorso della cartella di destinazione
+     * @param event
+     */
+    private void selectDestinationPath(ActionEvent event) {
+        Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Scegli una cartella di destinazione.");
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        destinationPath.setText(directoryChooser.showDialog(primaryStage).getAbsolutePath());
+    }
+
+    private void refreshConfigurationBox() {
+        for (Schedule schedule : Application.scheduler.schedules){
+            configurationBox.getItems().add(schedule.getName());
+        }
+    }
+
+    /**
+     * Imposta le informazioni della configurazione selezionata dal box
+     * @param event
+     */
+    private void setConfiguration(ActionEvent event) {
+        Schedule s;
+
+        currentSchedule = null;
+        for (int i = 0; i < Application.scheduler.schedules.size(); i++) {
+            s = Application.scheduler.schedules.get(i);
+            if (s.getName().equals(configurationBox.getValue())) {
+                currentSchedule = s;
+                scheduleIndex = i;
+                break;
+            }
+        }
+
+        if (currentSchedule == null) return;
+
+        // Imposta il tipo di backup
+        switch (currentSchedule.getBackup().getBackupType()) {
+            default:
+            case Complete:
+                setCompleteBackup(null);
+                break;
+            case Differential:
+                setDifferentialBackup(null);
+                break;
+            case Incremental:
+                setIncrementalBackup(null);
+                break;
+        }
+        // Imposta i percorsi (sorgente e destinazione)
+        sourcePath.setText(currentSchedule.getBackup().getSourceFolder().getAbsolutePath());
+        destinationPath.setText(currentSchedule.getBackup().getDestinationFolder().getAbsolutePath());
+        // Imposta il tipo di pianificazione
+        switch (currentSchedule.getScheduleType()) {
+            default:
+            case None:
+                setNoneSchedule(null);
+                break;
+            case Weekly:
+                setWeeklySchedule(null);
+                break;
+            case Monthly:
+                setMonthlySchedule(null);
+                break;
+        }
+        // Imposta i giorni della settimana della pianificazione
+        for (WeekDay weekDay : currentSchedule.getWeeklySchedule().weekDays) {
+            switch (weekDay) {
+                case Sunday: sundayCheck.setSelected(true); break;
+                case Monday: mondayCheck.setSelected(true); break;
+                case Tuesday: tuesdayCheck.setSelected(true); break;
+                case Wednesday: wednesdayCheck.setSelected(true); break;
+                case Thursday: thursdayCheck.setSelected(true); break;
+                case Friday: fridayCheck.setSelected(true); break;
+                case Saturday: saturdayCheck.setSelected(true); break;
+                default: break;
+            }
+        }
+        // Imposta i giorni del mese della pianificazione
+        for (int index : currentSchedule.getMonthlySchedule().days) {
+            monthDays.get(index-1).setSelected(true);
+        }
+        // Imposta gli orari della pianificazione settimanale
+        for (LocalTime time : currentSchedule.getWeeklySchedule().clock) {
+            timesWeeklyField.getItems().add(time.toString());
+        }
+        // Imposta gli orari della pianificazione mensile
+        for (LocalTime time : currentSchedule.getMonthlySchedule().clock) {
+            timesMonthlyField.getItems().add(time.toString());
+        }
+    }
+
+    // Imposta il tipo di backup da effettuare
+    private void setCompleteBackup(ActionEvent event) {
+        if (completeButton.isSelected()) {
+            backupType = BackupType.Complete;
+            differentialButton.setSelected(false);
+            incrementalButton.setSelected(false);
+        }
+        else
+            completeButton.setSelected(true);
+    }
+    private void setDifferentialBackup(ActionEvent event) {
+        if (differentialButton.isSelected()) {
+            backupType = BackupType.Differential;
+            completeButton.setSelected(false);
+            incrementalButton.setSelected(false);
+        }
+        else
+            differentialButton.setSelected(true);
+    }
+    private void setIncrementalBackup(ActionEvent event) {
+        if (incrementalButton.isSelected()) {
+            backupType = BackupType.Incremental;
+            differentialButton.setSelected(false);
+            completeButton.setSelected(false);
+        }
+        else
+            incrementalButton.setSelected(true);
+    }
+
+    // Imposta il tipo di pianificazione
+    private void setNoneSchedule(ActionEvent event) {
+        if (noneButton.isSelected()) {
+            // Imposta il tipo di pianificazione
+            scheduleType = ScheduleType.None;
+            // Modifica lo stato degli altri bottoni
+            weeklyButton.setSelected(false);
+            monthlyButton.setSelected(false);
+            // Modifica la visibilità dei pannelli di pianificazione
+            weeklyGrid.setDisable(true);
+            weeklyPane.setDisable(true);
+            monthlyGrid.setDisable(true);
+            monthlyPane.setDisable(true);
+        }
+        else {
+            // Reimposta lo stesso bottone se già selezionato
+            noneButton.setSelected(true);
+        }
+    }
+    private void setWeeklySchedule(ActionEvent event) {
+        if (weeklyButton.isSelected()) {
+            scheduleType = ScheduleType.Weekly;
+            noneButton.setSelected(false);
+            monthlyButton.setSelected(false);
+            weeklyGrid.setDisable(false);
+            weeklyPane.setDisable(false);
+            monthlyGrid.setDisable(true);
+            monthlyPane.setDisable(true);
+        }
+        else {
+            weeklyButton.setSelected(true);
+        }
+    }
+    private void setMonthlySchedule(ActionEvent event) {
+        if (monthlyButton.isSelected()) {
+            scheduleType = ScheduleType.Monthly;
+            noneButton.setSelected(false);
+            weeklyButton.setSelected(false);
+            weeklyGrid.setDisable(true);
+            weeklyPane.setDisable(true);
+            monthlyGrid.setDisable(false);
+            monthlyPane.setDisable(false);
+        }
+        else {
+            monthlyButton.setSelected(true);
+        }
+    }
+
+
+
+
+    /**
+     * Inizia il processo di backup
+     * @param event
+     */
+    private void start(ActionEvent event){
+        BackupType backupType;
+        if (differentialButton.isSelected())
+            backupType = BackupType.Differential;
+        else if (incrementalButton.isSelected())
+            backupType = BackupType.Incremental;
+        else
+            backupType = BackupType.Complete;
+
+        if (Utils.isSourcePathValid(new File(sourcePath.getText()),consoleLog) &&
+            Utils.isDestinationPathValid(new File(destinationPath.getText()),consoleLog)){
+            try {
+                Backup backup;
+                switch (backupType) {
+                    default:
+                    case Complete:
+                        backup = new CompleteBackup(sourcePath.getText(), destinationPath.getText());
+                        break;
+                    case Differential:
+                        backup = new DifferentialBackup(sourcePath.getText(), destinationPath.getText());
+                        break;
+                    case Incremental:
+                        backup = new IncrementalBackup(sourcePath.getText(), destinationPath.getText());
+                        break;
+                }
+
+                consoleLog.setText("");
+                log("Backup in corso.");
+                //log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
+                //log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
+
+                long lastDeltaTime = System.nanoTime();
+                backup.start();
+                long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
+                log("Backup completato in " + deltaTime + " secondi.");
+            }
+            catch (Exception e) { e.printStackTrace(); }
+        }
+    }
+
+    private void save(ActionEvent event) {
+        try {
+            // Imposta le informazioni del backup
+            Backup backup;
+            switch (backupType) {
+                default:
+                case Complete:
+                    backup = new CompleteBackup(sourcePath.getText(), destinationPath.getText());
+                    break;
+                case Differential:
+                    backup = new DifferentialBackup(sourcePath.getText(), destinationPath.getText());
+                    break;
+                case Incremental:
+                    backup = new IncrementalBackup(sourcePath.getText(), destinationPath.getText());
+                    break;
+            }
+            // Imposta le informazioni sulla pianificazione
             Schedule schedule = new Schedule(backup, scheduleType);
+            schedule.setName(backup.name());
             // Imposta i giorni della settimana
             WeeklySchedule weeklySchedule = new WeeklySchedule();
             if (sundayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Sunday);
@@ -312,150 +526,40 @@ public class Controller {
                 monthlySchedule.clock.add(LocalTime.parse(hour));
             }
             schedule.setMonthlySchedule(monthlySchedule);
-        });
-        startButton.setOnAction(event -> {
 
-        });
-        deleteButton.setOnAction(event -> {
-            Alert errorAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            errorAlert.setHeaderText("Eliminazione pianificazione.");
-            errorAlert.setContentText(
-                "Sei sicuro di voler eliminare la pianificazione per il backup: " /*+ backup.name()*/ + "?"
+            if (scheduleIndex > -1) {
+                Application.scheduler.schedules.set(scheduleIndex, schedule);
+            }
+            else {
+                Application.scheduler.schedules.add(schedule);
+                scheduleIndex = Application.scheduler.schedules.size() - 1;
+            }
+            int s = scheduleIndex;
+            setDefaultInformations();
+            refreshConfigurationBox();
+            configurationBox.setValue(Application.scheduler.schedules.get(s).getName());
+            setConfiguration(null);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void delete(ActionEvent event) {
+        if (scheduleIndex > -1) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Eliminazione pianificazione.");
+            alert.setContentText(
+                    "Sei sicuro di voler eliminare la pianificazione per il backup: " /*+ backup.name()*/ + "?"
             );
-            errorAlert.showAndWait().ifPresent(response -> {
+            alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    //
+                    Application.scheduler.schedules.remove(scheduleIndex);
                 }
             });
-        });
-        clearPage();
-    }
-
-    private void clearPage(){
-        currentSchedule = null;
-        scheduleType = ScheduleType.None;
-
-        configurationBox.setValue(null);
-        sourcePath.setText(null);
-        destinationPath.setText(null);
-        completeButton.setSelected(true);
-        differentialButton.setSelected(false);
-        incrementalButton.setSelected(false);
-
-        noneButton.setSelected(true);
-        weeklyButton.setSelected(false);
-        monthlyButton.setSelected(false);
-    }
-
-    /**
-     * Recupera e salva il percorso della cartella da salvare
-     * @param event
-     */
-    private void selectSourcePath(ActionEvent event){
-        Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Scegli la cartella che vuoi salvare.");
-
-        source = directoryChooser.showDialog(primaryStage);
-
-        if (Utils.isSourcePathValid(source, consoleLog)){
-            sourcePath.setText(source.getAbsolutePath());
         }
         else {
-            source = null;
-            log("La cartella di origine non è valida.");
-        }
-    }
-
-    /**
-     * Recupera e salva il percorso della cartella di destinazione
-     * @param event
-     */
-    private void selectDestinationPath(ActionEvent event) {
-        Stage primaryStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Scegli una cartella di destinazione.");
-
-        destination = directoryChooser.showDialog(primaryStage);
-
-        if (Utils.isDestinationPathValid(destination, consoleLog)) {
-            destinationPath.setText(destination.getAbsolutePath());
-        }
-        else {
-            destination = null;
-            log("La cartella di destinazione non è valida.");
-        }
-    }
-
-    /**
-     * Inizia il processo di backup
-     * @param event
-     */
-    private void process(ActionEvent event){
-        BackupType backupType;
-        if (differentialButton.isSelected())
-            backupType = BackupType.Differential;
-        else if (incrementalButton.isSelected())
-            backupType = BackupType.Incremental;
-        else
-            backupType = BackupType.Complete;
-
-        if (Application.DEBUG){
-            source = new File("/home/michele/Desktop/Cartella da salvare");
-            destination = new File("/home/michele/Desktop/Destinazione");
-        }
-
-        if (Utils.isSourcePathValid(source,consoleLog) && Utils.isDestinationPathValid(destination,consoleLog)){
-            try {
-                switch (backupType) {
-                    case Complete:
-                        backup = new CompleteBackup(
-                                source.getAbsolutePath(),
-                                destination.getAbsolutePath()
-                        );
-                        break;
-                    case Differential:
-                        backup = new DifferentialBackup(
-                                source.getAbsolutePath(),
-                                destination.getAbsolutePath()
-                        );
-                        break;
-                    case Incremental:
-                        backup = new IncrementalBackup(
-                                source.getAbsolutePath(),
-                                destination.getAbsolutePath()
-                        );
-                        break;
-                    default: break;
-                }
-
-                consoleLog.setText("");
-                log("Backup in corso.");
-                log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
-                log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
-
-                long lastDeltaTime = System.nanoTime();
-                backup.start();
-                long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
-                log("Backup completato in " + deltaTime + " secondi.");
-            }
-            catch (Exception e) { e.printStackTrace(); }
-        }
-    }
-
-    private void save(ActionEvent event) {
-        switch (scheduleType) {
-            case None:
-                if (currentSchedule != null) {
-                    currentSchedule.setBackup(backup);
-                }
-                break;
-            case Weekly:
-                break;
-            case Monthly:
-                break;
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Nessuna pianificazione.");
+            alert.setContentText("Non è stata selezionata nessuna pianificazione da eliminare.");
+            alert.showAndWait();
         }
     }
 

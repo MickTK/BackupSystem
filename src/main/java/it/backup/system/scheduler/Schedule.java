@@ -3,6 +3,7 @@ package it.backup.system.scheduler;
 import it.backup.system.backup.Backup;
 
 public class Schedule {
+    String name;
     Backup backup;
     ScheduleType scheduleType;
     WeeklySchedule weeklySchedule;
@@ -12,6 +13,13 @@ public class Schedule {
     public Schedule(Backup backup, ScheduleType scheduleType){
         this.backup = backup;
         this.scheduleType = scheduleType;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Backup getBackup(){

@@ -53,6 +53,16 @@ public class Backup {
         this.backupType = type;
     }
 
+    public BackupType getBackupType() {
+        return backupType;
+    }
+    public File getSourceFolder() {
+        return sourceFolder;
+    }
+    public File getDestinationFolder() {
+        return destinationFolder;
+    }
+
     /* Backup */
 
     /**
