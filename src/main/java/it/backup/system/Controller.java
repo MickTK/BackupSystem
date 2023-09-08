@@ -252,17 +252,10 @@ public class Controller {
      * @param backupType tipo di backup selezionato
      */
     private void setBackupRadioButton(BackupType backupType) {
-        if (this.backupType != backupType) {
-            this.backupType = backupType;
-            completeButton.setSelected(this.backupType.equals(BackupType.Complete));
-            differentialButton.setSelected(this.backupType.equals(BackupType.Differential));
-            incrementalButton.setSelected(this.backupType.equals(BackupType.Incremental));
-        }
-        else {
-            completeButton.setSelected(this.backupType.equals(BackupType.Complete));
-            differentialButton.setSelected(this.backupType.equals(BackupType.Differential));
-            incrementalButton.setSelected(this.backupType.equals(BackupType.Incremental));
-        }
+        if (this.backupType != backupType) this.backupType = backupType;
+        completeButton.setSelected(this.backupType.equals(BackupType.Complete));
+        differentialButton.setSelected(this.backupType.equals(BackupType.Differential));
+        incrementalButton.setSelected(this.backupType.equals(BackupType.Incremental));
     }
 
     //*************************************************************************
@@ -354,49 +347,13 @@ public class Controller {
         });
     }
     private void setScheduleRadioButton(ScheduleType scheduleType) {
-        switch (scheduleType) {
-            default:
-            case None:
-                if (noneButton.isSelected()) {
-                    // Imposta il tipo di pianificazione
-                    this.scheduleType = ScheduleType.None;
-                    // Modifica lo stato degli altri bottoni
-                    weeklyButton.setSelected(false);
-                    monthlyButton.setSelected(false);
-                    // Modifica la visibilità dei pannelli di pianificazione
-                    weeklyPanel.setDisable(true);
-                    monthlyPanel.setDisable(true);
-                }
-                else {
-                    // Reimposta lo stesso bottone se già selezionato
-                    noneButton.setSelected(true);
-                }
-                break;
-            case Weekly:
-                if (weeklyButton.isSelected()) {
-                    this.scheduleType = ScheduleType.Weekly;
-                    noneButton.setSelected(false);
-                    monthlyButton.setSelected(false);
-                    weeklyPanel.setDisable(false);
-                    monthlyPanel.setDisable(true);
-                }
-                else {
-                    weeklyButton.setSelected(true);
-                }
-                break;
-            case Monthly:
-                if (monthlyButton.isSelected()) {
-                    this.scheduleType = ScheduleType.Monthly;
-                    noneButton.setSelected(false);
-                    weeklyButton.setSelected(false);
-                    weeklyPanel.setDisable(true);
-                    monthlyPanel.setDisable(false);
-                }
-                else {
-                    monthlyButton.setSelected(true);
-                }
-                break;
-        }
+        if (this.scheduleType != scheduleType) this.scheduleType = scheduleType;
+        noneButton.setSelected(this.scheduleType.equals(ScheduleType.None));
+        weeklyButton.setSelected(this.scheduleType.equals(ScheduleType.Weekly));
+        monthlyButton.setSelected(this.scheduleType.equals(ScheduleType.Monthly));
+        
+        weeklyPanel.setDisable(!this.scheduleType.equals(ScheduleType.Weekly));
+        monthlyPanel.setDisable(!this.scheduleType.equals(ScheduleType.Monthly));
     }
 
     //*********************************************************************************************
