@@ -353,7 +353,9 @@ public class Controller {
     }
     private void setScheduleRadioButton(ScheduleType scheduleType) {
         if (this.scheduleType != scheduleType) this.scheduleType = scheduleType;
-        noneButton.setSelected(this.scheduleType.equals(ScheduleType.None));
+        noneButton.setSelected(
+                this.scheduleType.equals(ScheduleType.None)
+        );
         weeklyButton.setSelected(this.scheduleType.equals(ScheduleType.Weekly));
         monthlyButton.setSelected(this.scheduleType.equals(ScheduleType.Monthly));
 
@@ -479,6 +481,7 @@ public class Controller {
             configuration.setBackup(backup);
             // Imposta le informazioni sulla pianificazione
             Schedule schedule = new Schedule();
+            schedule.setScheduleType(scheduleType);
             // Imposta i giorni della settimana
             WeeklySchedule weeklySchedule = new WeeklySchedule();
             if (sundayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Sunday);
