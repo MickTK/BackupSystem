@@ -45,7 +45,7 @@
                <AnchorPane layoutX="2.0" layoutY="88.0">
                   <children>
                   
-                                                    <Label fx:id="welcomeText" text="Percorso da salvare:" />
+                                                    <Label fx:id="welcomeText" text="Cartella da salvare:" />
                      <TextField fx:id="sourcePath" layoutX="140.0" layoutY="-4.0" prefHeight="24.0" prefWidth="287.0" />
                    <Button fx:id="chooseSourcePath" layoutX="427.0" layoutY="-4.0" mnemonicParsing="false" text="..." />
                   </children>
@@ -67,111 +67,119 @@
                   </font>
                </Label>
                <RadioButton fx:id="noneButton" layoutX="5.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="Nessuna" />
-               <AnchorPane layoutX="123.0" layoutY="32.0">
+               <AnchorPane layoutX="123.0" layoutY="32.0" prefHeight="347.0" prefWidth="224.0">
                   <children>
                      <RadioButton fx:id="weeklyButton" mnemonicParsing="false" text="Settimanale" />
-                     <GridPane fx:id="weeklyGrid" disable="true" layoutX="24.0" layoutY="21.0">
-                       <columnConstraints>
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                       </columnConstraints>
-                       <rowConstraints>
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                       </rowConstraints>
+                     <AnchorPane fx:id="weeklyPanel" disable="true" prefHeight="347.0" prefWidth="224.0">
                         <children>
-                           <CheckBox fx:id="sundayCheck" mnemonicParsing="false" text="Domenica" GridPane.rowIndex="3" />
-                           <CheckBox fx:id="mondayCheck" mnemonicParsing="false" text="Lunedì" />
-                           <CheckBox fx:id="tuesdayCheck" mnemonicParsing="false" text="Martedì" GridPane.columnIndex="1" />
-                           <CheckBox fx:id="wednesdayCheck" mnemonicParsing="false" text="Mercoledì" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="thursdayCheck" mnemonicParsing="false" text="Giovedì" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="fridayCheck" mnemonicParsing="false" text="Venerdì" GridPane.rowIndex="2" />
-                           <CheckBox fx:id="saturdayCheck" mnemonicParsing="false" text="Sabato" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           <GridPane layoutX="14.0" layoutY="25.0">
+                             <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                             </columnConstraints>
+                             <rowConstraints>
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             </rowConstraints>
+                              <children>
+                                 <CheckBox fx:id="sundayCheck" mnemonicParsing="false" text="Domenica" GridPane.rowIndex="3" />
+                                 <CheckBox fx:id="mondayCheck" mnemonicParsing="false" text="Lunedì" />
+                                 <CheckBox fx:id="tuesdayCheck" mnemonicParsing="false" text="Martedì" GridPane.columnIndex="1" />
+                                 <CheckBox fx:id="wednesdayCheck" mnemonicParsing="false" text="Mercoledì" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="thursdayCheck" mnemonicParsing="false" text="Giovedì" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="fridayCheck" mnemonicParsing="false" text="Venerdì" GridPane.rowIndex="2" />
+                                 <CheckBox fx:id="saturdayCheck" mnemonicParsing="false" text="Sabato" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              </children>
+                           </GridPane>
+                           <AnchorPane layoutX="55.0" layoutY="220.0">
+                              <children>
+                                 <TextField fx:id="timeHourWeeklyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                                 <TextField fx:id="timeMinuteWeeklyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                                 <ListView fx:id="timesWeeklyField" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
+                                 <Button fx:id="plusWeeklyButton" layoutX="81.0" layoutY="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="+" />
+                                 <Button fx:id="minusWeeklyButton" layoutX="81.0" layoutY="56.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="-" />
+                                 <Text layoutX="37.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                              </children>
+                           </AnchorPane>
                         </children>
-                     </GridPane>
+                     </AnchorPane>
                   </children>
                </AnchorPane>
                <Line endX="-3.0" endY="214.0" layoutX="105.0" layoutY="158.0" startX="-3.0" startY="-123.0" />
-               <AnchorPane layoutX="350.0">
+               <AnchorPane layoutX="350.0" prefHeight="379.0" prefWidth="407.0">
                   <children>
                      <RadioButton fx:id="monthlyButton" layoutX="14.0" layoutY="34.0" mnemonicParsing="false" text="Mensile" />
-                     <GridPane fx:id="monthlyGrid" disable="true" layoutX="37.0" layoutY="52.0">
-                       <columnConstraints>
-                         <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
-                           <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
-                           <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
-                           <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
-                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="58.0" prefWidth="120.0" />
-                       </columnConstraints>
-                       <rowConstraints>
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                       </rowConstraints>
+                     <AnchorPane fx:id="monthlyPanel" disable="true" prefHeight="379.0" prefWidth="395.0">
                         <children>
-                           <CheckBox fx:id="day1Check" mnemonicParsing="false" text="1" />
-                           <CheckBox fx:id="day2Check" mnemonicParsing="false" text="2" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="day3Check" mnemonicParsing="false" text="3" GridPane.rowIndex="2" />
-                           <CheckBox fx:id="day4Check" mnemonicParsing="false" text="4" GridPane.rowIndex="3" />
-                           <CheckBox fx:id="day5Check" mnemonicParsing="false" text="5" GridPane.rowIndex="4" />
-                           <CheckBox fx:id="day6Check" mnemonicParsing="false" text="6" GridPane.rowIndex="5" />
-                           <CheckBox fx:id="day7Check" mnemonicParsing="false" text="7" GridPane.columnIndex="1" />
-                           <CheckBox fx:id="day8Check" mnemonicParsing="false" text="8" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="day9Check" mnemonicParsing="false" text="9" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                           <CheckBox fx:id="day11Check" mnemonicParsing="false" text="11" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                           <CheckBox fx:id="day10Check" mnemonicParsing="false" text="10" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                           <CheckBox fx:id="day12Check" mnemonicParsing="false" text="12" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                           <CheckBox fx:id="day13Check" mnemonicParsing="false" text="13" GridPane.columnIndex="2" />
-                           <CheckBox fx:id="day14Check" mnemonicParsing="false" text="14" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="day15Check" mnemonicParsing="false" text="15" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                           <CheckBox fx:id="day16Check" mnemonicParsing="false" text="16" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                           <CheckBox fx:id="day17Check" mnemonicParsing="false" text="17" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                           <CheckBox fx:id="day18Check" mnemonicParsing="false" text="18" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                           <CheckBox fx:id="day19Check" mnemonicParsing="false" text="19" GridPane.columnIndex="3" />
-                           <CheckBox fx:id="day20Check" mnemonicParsing="false" text="20" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="day21Check" mnemonicParsing="false" text="21" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                           <CheckBox fx:id="day22Check" mnemonicParsing="false" text="22" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                           <CheckBox fx:id="day23Check" mnemonicParsing="false" text="23" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                           <CheckBox fx:id="day24Check" mnemonicParsing="false" text="24" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                           <CheckBox fx:id="day25Check" mnemonicParsing="false" text="25" GridPane.columnIndex="4" />
-                           <CheckBox fx:id="day26Check" mnemonicParsing="false" text="26" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                           <CheckBox fx:id="day27Check" mnemonicParsing="false" text="27" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-                           <CheckBox fx:id="day28Check" mnemonicParsing="false" text="28" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                           <CheckBox fx:id="day29Check" mnemonicParsing="false" text="29" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                           <CheckBox fx:id="day30Check" mnemonicParsing="false" text="30" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-                           <CheckBox fx:id="day31Check" mnemonicParsing="false" text="31" GridPane.columnIndex="5" />
-                           <CheckBox fx:id="day32Check" mnemonicParsing="false" text="Ultimo giorno" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                           <GridPane layoutX="25.0" layoutY="57.0">
+                             <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="58.0" prefWidth="120.0" />
+                             </columnConstraints>
+                             <rowConstraints>
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             </rowConstraints>
+                              <children>
+                                 <CheckBox fx:id="day1Check" mnemonicParsing="false" text="1" />
+                                 <CheckBox fx:id="day2Check" mnemonicParsing="false" text="2" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="day3Check" mnemonicParsing="false" text="3" GridPane.rowIndex="2" />
+                                 <CheckBox fx:id="day4Check" mnemonicParsing="false" text="4" GridPane.rowIndex="3" />
+                                 <CheckBox fx:id="day5Check" mnemonicParsing="false" text="5" GridPane.rowIndex="4" />
+                                 <CheckBox fx:id="day6Check" mnemonicParsing="false" text="6" GridPane.rowIndex="5" />
+                                 <CheckBox fx:id="day7Check" mnemonicParsing="false" text="7" GridPane.columnIndex="1" />
+                                 <CheckBox fx:id="day8Check" mnemonicParsing="false" text="8" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="day9Check" mnemonicParsing="false" text="9" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 <CheckBox fx:id="day11Check" mnemonicParsing="false" text="11" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                 <CheckBox fx:id="day10Check" mnemonicParsing="false" text="10" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                 <CheckBox fx:id="day12Check" mnemonicParsing="false" text="12" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                 <CheckBox fx:id="day13Check" mnemonicParsing="false" text="13" GridPane.columnIndex="2" />
+                                 <CheckBox fx:id="day14Check" mnemonicParsing="false" text="14" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="day15Check" mnemonicParsing="false" text="15" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                 <CheckBox fx:id="day16Check" mnemonicParsing="false" text="16" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                 <CheckBox fx:id="day17Check" mnemonicParsing="false" text="17" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                 <CheckBox fx:id="day18Check" mnemonicParsing="false" text="18" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                 <CheckBox fx:id="day19Check" mnemonicParsing="false" text="19" GridPane.columnIndex="3" />
+                                 <CheckBox fx:id="day20Check" mnemonicParsing="false" text="20" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="day21Check" mnemonicParsing="false" text="21" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                 <CheckBox fx:id="day22Check" mnemonicParsing="false" text="22" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                 <CheckBox fx:id="day23Check" mnemonicParsing="false" text="23" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                 <CheckBox fx:id="day24Check" mnemonicParsing="false" text="24" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                 <CheckBox fx:id="day25Check" mnemonicParsing="false" text="25" GridPane.columnIndex="4" />
+                                 <CheckBox fx:id="day26Check" mnemonicParsing="false" text="26" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                                 <CheckBox fx:id="day27Check" mnemonicParsing="false" text="27" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                                 <CheckBox fx:id="day28Check" mnemonicParsing="false" text="28" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                                 <CheckBox fx:id="day29Check" mnemonicParsing="false" text="29" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                                 <CheckBox fx:id="day30Check" mnemonicParsing="false" text="30" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                                 <CheckBox fx:id="day31Check" mnemonicParsing="false" text="31" GridPane.columnIndex="5" />
+                                 <CheckBox fx:id="day32Check" mnemonicParsing="false" text="Ultimo giorno" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              </children>
+                           </GridPane>
+                           <AnchorPane layoutX="141.0" layoutY="252.0">
+                              <children>
+                                 <TextField fx:id="timeHourMonthlyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                                 <TextField fx:id="timeMinuteMonthlyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
+                                 <ListView fx:id="timesMonthlyField" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
+                                 <Button fx:id="plusMonthlyButton" layoutX="81.0" layoutY="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="+" />
+                                 <Button fx:id="minusMonthlyButton" layoutX="81.0" layoutY="56.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="-" />
+                                 <Text layoutX="37.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                              </children>
+                           </AnchorPane>
                         </children>
-                     </GridPane>
-                  </children>
-               </AnchorPane>
-               <AnchorPane fx:id="weeklyPane" disable="true" layoutX="169.0" layoutY="257.0">
-                  <children>
-                     <TextField fx:id="timeHourWeeklyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
-                     <TextField fx:id="timeMinuteWeeklyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
-                     <ListView fx:id="timesWeeklyField" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
-                     <Button fx:id="plusWeeklyButton" layoutX="81.0" layoutY="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="+" />
-                     <Button fx:id="minusWeeklyButton" layoutX="81.0" layoutY="56.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="-" />
-                     <Text layoutX="37.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
+                     </AnchorPane>
                   </children>
                </AnchorPane>
                <Line endX="-3.0" endY="223.0" layoutX="350.0" layoutY="155.0" startX="-3.0" startY="-123.0" />
-               <AnchorPane fx:id="monthlyPane" disable="true" layoutX="497.0" layoutY="257.0">
-                  <children>
-                     <TextField fx:id="timeHourMonthlyField" alignment="CENTER" layoutX="2.0" prefHeight="24.0" prefWidth="33.0" text="00" />
-                     <TextField fx:id="timeMinuteMonthlyField" alignment="CENTER" layoutX="43.0" prefHeight="24.0" prefWidth="33.0" text="00" />
-                     <ListView fx:id="timesMonthlyField" layoutY="24.0" prefHeight="89.0" prefWidth="80.0" />
-                     <Button fx:id="plusMonthlyButton" layoutX="81.0" layoutY="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="+" />
-                     <Button fx:id="minusMonthlyButton" layoutX="81.0" layoutY="56.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="33.0" text="-" />
-                     <Text layoutX="37.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" />
-                  </children>
-               </AnchorPane>
             </children>
          </AnchorPane>
       </children>
