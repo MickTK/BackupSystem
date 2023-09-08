@@ -1,7 +1,6 @@
 package it.backup.system;
 
-import it.backup.system.scheduler.Schedule;
-import it.backup.system.scheduler.Scheduler;
+import it.backup.system.configuration.Scheduler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,7 +1,8 @@
 package it.backup.system;
 
-import it.backup.system.backup.*;
-import it.backup.system.scheduler.*;
+import it.backup.system.configuration.BackupConfiguration;
+import it.backup.system.configuration.backup.*;
+import it.backup.system.configuration.schedule.*;
 import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.lang.module.Configuration;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Controller {
 
     BackupType backupType;
     ScheduleType scheduleType;
-    int scheduleIndex;
+    int configurationIndex;
 
     /** Backup **/
     @FXML private ChoiceBox<String> configurationBox;    // Mostra il nome della configurazione corrente
@@ -176,35 +178,38 @@ public class Controller {
      * @param event
      */
     private void loadConfiguration(ActionEvent event) {
-        Schedule tempSchedule, schedule = null;
+        BackupConfiguration configuration = null;
+        Backup backup = null;
+        Schedule schedule = null;
 
         // Impedisce di eseguire il metodo se la configurazione è vuota
         if (configurationBox.getValue() == null || configurationBox.getValue().isBlank()) return;
 
         // Recupera la configurazione selezionata nel box dalla lista di configurazioni
-        for (int i = 0; i < Application.scheduler.schedules.size(); i++) {
-            tempSchedule = Application.scheduler.schedules.get(i);
-            if (tempSchedule.getName().equals(configurationBox.getValue())) {
-                schedule = tempSchedule;
-                scheduleIndex = i;
+        for (int i = 0; i < Application.scheduler.configurations.size(); i++) {
+            configuration = Application.scheduler.configurations.get(i);
+            if (configuration.getName().equals(configurationBox.getValue())) {
+                schedule = configuration.getSchedule();
+                backup = configuration.getBackup();
+                configurationIndex = i;
                 break;
             }
         }
-        if (schedule == null) return;
+        if (schedule == null || backup == null) return;
 
-        loadBackupConfiguration(schedule);
+        loadBackupConfiguration(backup);
         loadScheduleConfiguration(schedule);
     }
     /**
      * Aggiorna l'interfaccia del backup
-     * @param schedule
+     * @param backup
      */
-    private void loadBackupConfiguration(Schedule schedule) {
+    private void loadBackupConfiguration(Backup backup) {
         // Imposta il tipo di backup
-        setBackupRadioButton(schedule.getBackup().getBackupType());
+        setBackupRadioButton(backup.getBackupType());
         // Imposta i percorsi (sorgente e destinazione)
-        sourcePath.setText(schedule.getBackup().getSourceFolder().getAbsolutePath());
-        destinationPath.setText(schedule.getBackup().getDestinationFolder().getAbsolutePath());
+        sourcePath.setText(backup.getSourceFolder().getAbsolutePath());
+        destinationPath.setText(backup.getDestinationFolder().getAbsolutePath());
     }
     /**
      * Aggiorna l'interfaccia della pianificazione
@@ -243,8 +248,8 @@ public class Controller {
      */
     private void refreshConfigurationBox() {
         configurationBox.getItems().clear();
-        for (Schedule schedule : Application.scheduler.schedules){
-            configurationBox.getItems().add(schedule.getName());
+        for (BackupConfiguration configuration : Application.scheduler.configurations){
+            configurationBox.getItems().add(configuration.getName());
         }
     }
     /**
@@ -351,7 +356,7 @@ public class Controller {
         noneButton.setSelected(this.scheduleType.equals(ScheduleType.None));
         weeklyButton.setSelected(this.scheduleType.equals(ScheduleType.Weekly));
         monthlyButton.setSelected(this.scheduleType.equals(ScheduleType.Monthly));
-        
+
         weeklyPanel.setDisable(!this.scheduleType.equals(ScheduleType.Weekly));
         monthlyPanel.setDisable(!this.scheduleType.equals(ScheduleType.Monthly));
     }
@@ -368,7 +373,7 @@ public class Controller {
      * Ripristina la configurazione mostrata a schermo
      */
     private void cleanConfiguration(){
-        scheduleIndex = -1;
+        configurationIndex = -1;
         refreshConfigurationBox();
         cleanBackupConfiguration();
         cleanScheduleConfiguration();
@@ -455,6 +460,7 @@ public class Controller {
      */
     private void save(ActionEvent event) {
         try {
+            BackupConfiguration configuration = new BackupConfiguration();
             // Imposta le informazioni del backup
             Backup backup;
             switch (backupType) {
@@ -469,9 +475,10 @@ public class Controller {
                     backup = new IncrementalBackup(sourcePath.getText(), destinationPath.getText());
                     break;
             }
+            configuration.setName(backup.name());
+            configuration.setBackup(backup);
             // Imposta le informazioni sulla pianificazione
-            Schedule schedule = new Schedule(backup, scheduleType);
-            schedule.setName(backup.name());
+            Schedule schedule = new Schedule();
             // Imposta i giorni della settimana
             WeeklySchedule weeklySchedule = new WeeklySchedule();
             if (sundayCheck.isSelected()) weeklySchedule.weekDays.add(WeekDay.Sunday);
@@ -498,18 +505,18 @@ public class Controller {
                 monthlySchedule.clock.add(LocalTime.parse(hour));
             }
             schedule.setMonthlySchedule(monthlySchedule);
+            configuration.setSchedule(schedule);
 
-            if (scheduleIndex > -1) {
-                Application.scheduler.schedules.set(scheduleIndex, schedule);
+            if (configurationIndex > -1) {
+                Application.scheduler.configurations.set(configurationIndex, configuration);
             }
             else {
-                Application.scheduler.schedules.add(schedule);
-                scheduleIndex = Application.scheduler.schedules.size() - 1;
+                Application.scheduler.configurations.add(configuration);
+                configurationIndex = Application.scheduler.configurations.size() - 1;
             }
-            int s = scheduleIndex;
+            int s = configurationIndex;
             cleanConfiguration();
-            configurationBox.setValue(Application.scheduler.schedules.get(s).getName());
-            //loadConfiguration(null);
+            configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
         } catch (Exception e) { e.printStackTrace(); }
     }
     /**
@@ -517,7 +524,7 @@ public class Controller {
      * @param event
      */
     private void delete(ActionEvent event) {
-        if (scheduleIndex > -1) {
+        if (configurationIndex > -1) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Eliminazione pianificazione.");
             alert.setContentText(
@@ -525,7 +532,8 @@ public class Controller {
             );
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    Application.scheduler.schedules.remove(scheduleIndex);
+                    Application.scheduler.configurations.remove(configurationIndex);
+                    cleanConfiguration();
                 }
             });
         }

@@ -9,6 +9,6 @@ module it.backup.system {
     exports it.backup.system;
     exports it.backup.system.utils;
     opens it.backup.system.utils to javafx.fxml;
-    exports it.backup.system.backup;
-    opens it.backup.system.backup to javafx.fxml;
+    exports it.backup.system.configuration.backup;
+    opens it.backup.system.configuration.backup to javafx.fxml;
 }

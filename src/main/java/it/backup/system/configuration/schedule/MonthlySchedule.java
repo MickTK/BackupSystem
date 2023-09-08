@@ -1,4 +1,4 @@
-package it.backup.system.scheduler;
+package it.backup.system.configuration.schedule;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

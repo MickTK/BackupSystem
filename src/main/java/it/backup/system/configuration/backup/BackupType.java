@@ -1,4 +1,4 @@
-package it.backup.system.backup;
+package it.backup.system.configuration.backup;
 
 public enum BackupType {
     Complete,
