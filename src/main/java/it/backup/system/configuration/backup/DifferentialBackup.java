@@ -46,7 +46,9 @@ public class DifferentialBackup extends Backup {
                     }*/
             else { throw new Exception(previousBackupFolder + " is not a directory."); }
         }
-        else { throw new Exception(previousBackupFolder + " does not exists."); }
+        else {
+            new CompleteBackup(sourceFolder.getAbsolutePath(), destinationFolder.getAbsolutePath()).start();
+        }
     }
 
     /**

@@ -33,7 +33,9 @@ public class IncrementalBackup extends Backup {
                         backupFolder.delete();*/
             }
         }
-        else { throw new Exception(previousBackupFolder + " does not exists or it is not a directory."); }
+        else {
+            new CompleteBackup(sourceFolder.getAbsolutePath(), destinationFolder.getAbsolutePath()).start();
+        }
     }
 
     /**

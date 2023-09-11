@@ -510,16 +510,45 @@ public class Controller {
             schedule.setMonthlySchedule(monthlySchedule);
             configuration.setSchedule(schedule);
 
-            if (configurationIndex > -1) {
-                Application.scheduler.configurations.set(configurationIndex, configuration);
+            // Cotrolla se il nome della configurazione corrisponde ad una configurazione già presente
+            if (configurationBox.getItems().contains(backup.name())) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setHeaderText("Backup già presente.");
+                alert.setContentText(
+                        "Esiste già un backup con lo stesso nome.\n"
+                                + "Accettando verrà sovrascritto con le impostazioni correnti, altrimenti verrà annullato il salvataggio."
+                );
+                // Chiede di confermare la sovrascrittura oppure se annullare l'operazione
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        for (int i = 0; i < Application.scheduler.configurations.size(); i++) {
+                            BackupConfiguration conf = Application.scheduler.configurations.get(i);
+                            if (conf.getName().equals(configuration.getName())) {
+                                configurationIndex = i;
+                                Application.scheduler.configurations.set(configurationIndex, configuration);
+                                int s = configurationIndex;
+                                cleanConfiguration();
+                                configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
+                            }
+                        }
+                    }
+                });
             }
+            // Viene sovrascritta la configurazione corrente
+            else if (configurationIndex > -1) {
+                Application.scheduler.configurations.set(configurationIndex, configuration);
+                int s = configurationIndex;
+                cleanConfiguration();
+                configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
+            }
+            // Viene aggiunta la nuova configurazione allo scheduler
             else {
                 Application.scheduler.configurations.add(configuration);
                 configurationIndex = Application.scheduler.configurations.size() - 1;
+                int s = configurationIndex;
+                cleanConfiguration();
+                configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
             }
-            int s = configurationIndex;
-            cleanConfiguration();
-            configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
         } catch (Exception e) { e.printStackTrace(); }
     }
     /**
