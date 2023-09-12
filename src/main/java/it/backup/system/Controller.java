@@ -531,6 +531,7 @@ public class Controller {
                                 int s = configurationIndex;
                                 cleanConfiguration();
                                 configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
+                                Application.scheduler.saveToFile();
                             }
                         }
                     }
@@ -542,6 +543,7 @@ public class Controller {
                 int s = configurationIndex;
                 cleanConfiguration();
                 configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
+                Application.scheduler.saveToFile();
             }
             // Viene aggiunta la nuova configurazione allo scheduler
             else {
@@ -550,8 +552,12 @@ public class Controller {
                 int s = configurationIndex;
                 cleanConfiguration();
                 configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
+                Application.scheduler.saveToFile();
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
     /**
      * Elimina la configurazione corrente

@@ -18,8 +18,11 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
         // Recupera i dati dello scheduler
-        scheduler = new Scheduler();
+        scheduler = Scheduler.loadFromFile();
+        if (scheduler == null)
+            scheduler = new Scheduler();
 
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());

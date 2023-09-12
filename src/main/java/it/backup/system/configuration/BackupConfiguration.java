@@ -2,18 +2,12 @@ package it.backup.system.configuration;
 
 import it.backup.system.configuration.backup.Backup;
 import it.backup.system.configuration.schedule.Schedule;
-import com.google.gson.Gson;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.Scanner;
 
 public class BackupConfiguration {
 
-    private String name;       // Nome della configurazione (nome della cartella di backup)
-    private Backup backup;     // Informazioni sul backup
-    private Schedule schedule; // Informazioni sulla pianificazione
+    String name;       // Nome della configurazione (nome della cartella di backup)
+    Backup backup;     // Informazioni sul backup
+    Schedule schedule; // Informazioni sulla pianificazione
 
     // Getters and setters
 

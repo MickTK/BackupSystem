@@ -25,6 +25,9 @@ public class Scheduler {
         configurations = new ArrayList<>();
     }
 
+    /**
+     * Salva lo scheduler su file
+     */
     public void saveToFile() {
         String data = new Gson().toJson(this);
         File file = new File(configFilePath);
@@ -38,6 +41,11 @@ public class Scheduler {
         }
         catch (Exception e) {e.printStackTrace();}
     }
+
+    /**
+     * Recupera le informazioni dello scheduler dal file
+     * @return scheduler
+     */
     public static Scheduler loadFromFile() {
         File file = new File(configFilePath);
         if (!file.exists()) return null;
