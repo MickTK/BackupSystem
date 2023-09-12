@@ -4,6 +4,7 @@ module it.backup.system {
 
     requires org.controlsfx.controls;
     requires org.jetbrains.annotations;
+    requires com.google.gson;
 
     opens it.backup.system to javafx.fxml;
     exports it.backup.system;

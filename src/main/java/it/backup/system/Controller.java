@@ -12,11 +12,13 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.lang.module.Configuration;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Controller dell'interfaccia
+ */
 public class Controller {
 
     BackupType backupType;

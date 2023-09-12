@@ -12,6 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Backup incrementale
+ */
 public class IncrementalBackup extends Backup {
 
     public IncrementalBackup(String sourceFolderPath, String destinationFolderPath) throws Exception {

@@ -7,6 +7,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Applicazione principale
+ */
 public class Application extends javafx.application.Application {
 
     static public final boolean DEBUG = false;

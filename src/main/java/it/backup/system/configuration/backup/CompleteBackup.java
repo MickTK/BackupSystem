@@ -5,6 +5,9 @@ import it.backup.system.utils.Utils;
 import java.io.File;
 import java.nio.file.Files;
 
+/**
+ * Backup completo
+ */
 public class CompleteBackup extends Backup {
 
     public CompleteBackup(String sourceFolderPath, String destinationFolderPath) throws Exception {

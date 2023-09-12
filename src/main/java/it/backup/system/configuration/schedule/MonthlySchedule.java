@@ -4,6 +4,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Informazioni pianificazione mensile
+ */
 public class MonthlySchedule {
     public List<Integer> days;
     public List<LocalTime> clock;

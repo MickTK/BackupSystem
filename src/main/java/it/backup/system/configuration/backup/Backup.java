@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Classe che si occupa di salvare le informazioni dei backup e lo effettua
+ */
 public class Backup {
 
     /* Macros */

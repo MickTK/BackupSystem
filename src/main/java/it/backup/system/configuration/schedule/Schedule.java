@@ -1,7 +1,8 @@
 package it.backup.system.configuration.schedule;
 
-import it.backup.system.configuration.backup.Backup;
-
+/**
+ * Informazioni pianificazione
+ */
 public class Schedule {
     ScheduleType scheduleType;
     WeeklySchedule weeklySchedule;

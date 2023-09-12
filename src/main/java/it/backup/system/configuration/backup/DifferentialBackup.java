@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.nio.file.Files;
 
+/**
+ * Backup differenziale
+ */
 public class DifferentialBackup extends Backup {
 
     public DifferentialBackup(String sourceFolderPath, String destinationFolderPath) throws Exception {
