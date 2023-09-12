@@ -1,5 +1,6 @@
 package it.backup.system;
 
+import com.google.gson.Gson;
 import it.backup.system.configuration.Scheduler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,9 +21,9 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
 
         // Recupera i dati dello scheduler
-        scheduler = Scheduler.loadFromFile();
-        if (scheduler == null)
-            scheduler = new Scheduler();
+        scheduler = new Scheduler();
+
+        Test.test();
 
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
@@ -35,4 +36,5 @@ public class Application extends javafx.application.Application {
     public static void main(String[] args) {
         launch();
     }
+
 }

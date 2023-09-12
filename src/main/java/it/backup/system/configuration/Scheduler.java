@@ -23,13 +23,29 @@ public class Scheduler {
      */
     public Scheduler() {
         configurations = new ArrayList<>();
+        // Recupera le configurazioni dal file
+        File file = new File(configFilePath);
+        if (!file.exists()) return;
+        String data = "";
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                data += scanner.nextLine();
+            }
+        }
+        catch (Exception e) {e.printStackTrace();}
+        if (data.length() > 0)
+            for (Object d : new Gson().fromJson(data, List.class))
+                configurations.add(new BackupConfiguration((BackupConfigurationData) d));
     }
 
     /**
      * Salva lo scheduler su file
      */
     public void saveToFile() {
-        String data = new Gson().toJson(this);
+        List<BackupConfigurationData> dataC = new ArrayList<>();
+        for (BackupConfiguration conf : configurations)
+            dataC.add(conf.toData());
+        String data = new Gson().toJson(dataC);
         File file = new File(configFilePath);
         try {
             if (!file.exists()) file.createNewFile();
@@ -40,25 +56,5 @@ public class Scheduler {
             );
         }
         catch (Exception e) {e.printStackTrace();}
-    }
-
-    /**
-     * Recupera le informazioni dello scheduler dal file
-     * @return scheduler
-     */
-    public static Scheduler loadFromFile() {
-        File file = new File(configFilePath);
-        if (!file.exists()) return null;
-        String data = "";
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                data += scanner.nextLine();
-            }
-        }
-        catch (Exception e) {e.printStackTrace();}
-        if (data.length() > 0) {
-            return new Gson().fromJson(data, Scheduler.class);
-        }
-        else return null;
     }
 }
