@@ -1,6 +1,5 @@
 package it.backup.system.configuration.schedule;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,7 @@ import java.util.List;
  */
 public class WeeklySchedule {
     public List<WeekDay> weekDays;
-    public List<LocalTime> clock;
+    public List<String> clock;
 
     public WeeklySchedule() {
         weekDays = new ArrayList<>();

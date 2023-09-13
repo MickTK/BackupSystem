@@ -256,7 +256,7 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
+                    if (destinationFile.isDirectory() && matchName(destinationFile)){
                         current = getBackupVersion(destinationFile.getName(), BackupType.Complete);
                         if (current > version){
                             version = current;
@@ -281,7 +281,7 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
+                    if (destinationFile.isDirectory() && matchName(destinationFile)){
                         if (getBackupVersion(destinationFile.getName(), BackupType.Complete) == completeVersion){
                             current = getBackupVersion(destinationFile.getName(), BackupType.Differential);
                             if (current > version){
@@ -308,7 +308,7 @@ public class Backup {
             File[] destinationFiles = destinationFolder.listFiles();
             if (destinationFiles != null) {
                 for (File destinationFile : destinationFiles) {
-                    if (destinationFile.isDirectory()){
+                    if (destinationFile.isDirectory() && matchName(destinationFile)){
                         if (getBackupVersion(destinationFile.getName(), BackupType.Complete) == completeVersion){
                             current = getBackupVersion(destinationFile.getName(), BackupType.Incremental);
                             if (current > version){
@@ -357,6 +357,17 @@ public class Backup {
             return null;
         else
             return String.format(BACKUP_NAME, name, completeVersion, differentialVersion, incrementalVersion);
+    }
+
+    /**
+     * Controlla se il nome del backup (senza versione) corrisponde al nome del backup attuale
+     * @param file cartella su cui effettuare il controllo
+     * @return risultato del confronto
+     */
+    boolean matchName(File file) {
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(file.getName());
+        return matcher.matches() && matcher.group(1).equals(name());
     }
 
     /**

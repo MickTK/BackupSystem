@@ -1,8 +1,10 @@
 package it.backup.system.configuration;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -33,9 +35,18 @@ public class Scheduler {
             }
         }
         catch (Exception e) {e.printStackTrace();}
-        if (data.length() > 0)
-            for (Object d : new Gson().fromJson(data, List.class))
-                configurations.add(new BackupConfiguration((BackupConfigurationData) d));
+        if (!data.isEmpty()) {
+            try {
+                Type listType = new TypeToken<ArrayList<BackupConfigurationData>>(){}.getType();
+                List<BackupConfigurationData> confDatas = new Gson().fromJson(data, listType);
+                for (BackupConfigurationData d : confDatas) {
+                    configurations.add(new BackupConfiguration(d));
+                }
+            }
+            catch (Exception e) {
+                System.out.println("Il file di configurazione è corrotto e per tanto non verrà caricato.");
+            }
+        }
     }
 
     /**

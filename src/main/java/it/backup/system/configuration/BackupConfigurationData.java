@@ -16,7 +16,7 @@ public class BackupConfigurationData {
 
     public ScheduleType scheduleType;
     public List<WeekDay> weekDays;
-    public List<LocalTime> weekClock;
+    public List<String> weekClock;
     public List<Integer> monthDays;
-    public List<LocalTime> monthClock;
+    public List<String> monthClock;
 }

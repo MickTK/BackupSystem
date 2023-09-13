@@ -1,6 +1,5 @@
 package it.backup.system;
 
-import com.google.gson.Gson;
 import it.backup.system.configuration.Scheduler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

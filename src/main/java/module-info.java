@@ -1,4 +1,5 @@
 module it.backup.system {
+
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -9,6 +10,8 @@ module it.backup.system {
     opens it.backup.system to javafx.fxml;
     exports it.backup.system;
     exports it.backup.system.utils;
+    exports it.backup.system.configuration;
+    exports it.backup.system.configuration.schedule;
     opens it.backup.system.utils to javafx.fxml;
     exports it.backup.system.configuration.backup;
     opens it.backup.system.configuration.backup to javafx.fxml;

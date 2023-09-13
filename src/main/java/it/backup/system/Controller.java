@@ -180,7 +180,7 @@ public class Controller {
      * @param event
      */
     private void loadConfiguration(ActionEvent event) {
-        BackupConfiguration configuration = null;
+        BackupConfiguration configuration;
         Backup backup = null;
         Schedule schedule = null;
 
@@ -221,6 +221,9 @@ public class Controller {
         // Imposta il tipo di pianificazione
         setScheduleRadioButton(schedule.getScheduleType());
         // Imposta i giorni della settimana della pianificazione
+        for (CheckBox box : weekDays) {
+            box.setSelected(false);
+        }
         for (WeekDay weekDay : schedule.getWeeklySchedule().weekDays) {
             switch (weekDay) {
                 case Sunday: sundayCheck.setSelected(true); break;
@@ -233,15 +236,20 @@ public class Controller {
             }
         }
         // Imposta gli orari della pianificazione settimanale
-        for (LocalTime time : schedule.getWeeklySchedule().clock) {
+        timesWeeklyField.getItems().clear();
+        for (String time : schedule.getWeeklySchedule().clock) {
             timesWeeklyField.getItems().add(time.toString());
         }
         // Imposta i giorni del mese della pianificazione
+        for (CheckBox box : monthDays) {
+            box.setSelected(false);
+        }
         for (int day : schedule.getMonthlySchedule().days) {
             monthDays.get(day - 1).setSelected(true);
         }
         // Imposta gli orari della pianificazione mensile
-        for (LocalTime time : schedule.getMonthlySchedule().clock) {
+        timesMonthlyField.getItems().clear();
+        for (String time : schedule.getMonthlySchedule().clock) {
             timesMonthlyField.getItems().add(time.toString());
         }
     }
@@ -287,7 +295,7 @@ public class Controller {
             if (!newValue.matches("\\d*")) s = newValue.replaceAll("[^\\d]", "");
             // Tiene solo due caratteri per volta
             if (s.length() > length) s = s.substring(0, length);
-                // Imposta 23 come orario massimo
+            // Imposta 23 come orario massimo
             else if (s.length() == length && Integer.parseInt(s) > 23) s = "23";
             timeHourWeeklyField.setText(s);
         });
@@ -298,21 +306,31 @@ public class Controller {
             if (!newValue.matches("\\d*")) s = newValue.replaceAll("[^\\d]", "");
             // Tiene solo due caratteri per volta
             if (s.length() > length) s = s.substring(0, length);
-                // Imposta 59 come orario massimo
+            // Imposta 59 come orario massimo
             else if (s.length() == length && Integer.parseInt(s) > 59) s = "59";
             timeMinuteWeeklyField.setText(s);
         });
         plusWeeklyButton.setOnAction(event -> {
             // Aggiunge l'orario alla lista visualizzata
             String s = "";
-            if (timeHourWeeklyField.getText().length() < 2) s += "0";
+            switch (timeHourWeeklyField.getText().length()) {
+                case 0: s += "00"; break;
+                case 1: s += "0"; break;
+                default: break;
+            }
             s += timeHourWeeklyField.getText();
             s += ":";
-            if (timeMinuteWeeklyField.getText().length() < 2) s += "0";
+            switch (timeMinuteWeeklyField.getText().length()) {
+                case 0: s += "00"; break;
+                case 1: s += "0"; break;
+                default: break;
+            }
             s += timeMinuteWeeklyField.getText();
             // Controlla se esiste già l'orario impostato
             if (!timesWeeklyField.getItems().contains(s))
                 timesWeeklyField.getItems().add(s);
+            timeMinuteWeeklyField.setText("00");
+            timeHourWeeklyField.setText("00");
         });
         minusWeeklyButton.setOnAction(event -> {
             timesWeeklyField.getItems().removeAll(timesWeeklyField.getSelectionModel().getSelectedItem());
@@ -340,14 +358,24 @@ public class Controller {
         });
         plusMonthlyButton.setOnAction(event -> {
             String s = "";
-            if (timeHourMonthlyField.getText().length() < 2) s += "0";
+            switch (timeHourMonthlyField.getText().length()) {
+                case 0: s += "00"; break;
+                case 1: s += "0"; break;
+                default: break;
+            }
             s += timeHourMonthlyField.getText();
             s += ":";
-            if (timeMinuteMonthlyField.getText().length() < 2) s += "0";
+            switch (timeMinuteMonthlyField.getText().length()) {
+                case 0: s += "00"; break;
+                case 1: s += "0"; break;
+                default: break;
+            }
             s += timeMinuteMonthlyField.getText();
             // Controlla se esiste già l'orario impostato
             if (!timesMonthlyField.getItems().contains(s))
                 timesMonthlyField.getItems().add(s);
+            timeMinuteMonthlyField.setText("00");
+            timeHourMonthlyField.setText("00");
         });
         minusMonthlyButton.setOnAction(event -> {
             timesMonthlyField.getItems().removeAll(timesMonthlyField.getSelectionModel().getSelectedItem());
@@ -496,7 +524,7 @@ public class Controller {
             schedule.setWeeklySchedule(weeklySchedule);
             // Imposta gli orari dei giorni della settimana
             for (String hour : timesWeeklyField.getItems()) {
-                weeklySchedule.clock.add(LocalTime.parse(hour));
+                weeklySchedule.clock.add(hour);
             }
             // Imposta i giorni del mese
             MonthlySchedule monthlySchedule = new MonthlySchedule();
@@ -507,7 +535,7 @@ public class Controller {
             }
             // Imposta gli orari dei giorni del mese
             for (String hour : timesMonthlyField.getItems()) {
-                monthlySchedule.clock.add(LocalTime.parse(hour));
+                monthlySchedule.clock.add(hour);
             }
             schedule.setMonthlySchedule(monthlySchedule);
             configuration.setSchedule(schedule);
@@ -573,6 +601,7 @@ public class Controller {
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     Application.scheduler.configurations.remove(configurationIndex);
+                    Application.scheduler.saveToFile();
                     cleanConfiguration();
                 }
             });
