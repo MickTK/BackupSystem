@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class Routine implements Runnable {
     String lastCheck = null;
     String datePattern = "dd/MM/yyyy HH:mm";
-    public boolean canRun = true;
+    public static boolean canRun = true;
 
     public void run() {
         while (canRun) {
@@ -23,7 +23,6 @@ public class Routine implements Runnable {
                 lastCheck = time;
                 synchronized (Application.class) {
                     for (BackupConfiguration conf : Application.scheduler.configurations) {
-                        System.out.println(conf.getName() + ": " + conf.getSchedule().getWeeklySchedule().check());
                         if (conf.getSchedule().getScheduleType().equals(ScheduleType.Weekly) &&
                                 conf.getSchedule().getWeeklySchedule().check()) {
                             synchronized (BackgroundProcessor.class) {

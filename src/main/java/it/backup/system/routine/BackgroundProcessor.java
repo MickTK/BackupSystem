@@ -7,7 +7,7 @@ import java.util.List;
 
 public class BackgroundProcessor implements Runnable {
     static List<Backup> list = new ArrayList<>();
-    public boolean canRun = true;
+    public static boolean canRun = true;
 
     public static void addBackup(Backup backup) {
         list.add(backup);

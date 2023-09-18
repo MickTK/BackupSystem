@@ -62,6 +62,11 @@ public class Scheduler {
             if (!file.exists()) file.createNewFile();
             Files.write(
                     file.toPath(),
+                    "".getBytes(),
+                    StandardOpenOption.WRITE
+            );
+            Files.write(
+                    file.toPath(),
                     data.getBytes(),
                     StandardOpenOption.WRITE
             );

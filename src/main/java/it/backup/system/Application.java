@@ -3,9 +3,11 @@ package it.backup.system;
 import it.backup.system.configuration.Scheduler;
 import it.backup.system.routine.BackgroundProcessor;
 import it.backup.system.routine.Routine;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -33,6 +35,14 @@ public class Application extends javafx.application.Application {
         stage.setTitle("Backup System");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setOnCloseRequest(event -> {
+            synchronized (Routine.class) {
+                Routine.canRun = false;
+            }
+            synchronized (BackgroundProcessor.class) {
+                BackgroundProcessor.canRun = false;
+            }
+        });
         stage.show();
 
         // Threads
