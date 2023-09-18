@@ -15,4 +15,6 @@ module it.backup.system {
     opens it.backup.system.utils to javafx.fxml;
     exports it.backup.system.configuration.backup;
     opens it.backup.system.configuration.backup to javafx.fxml;
+    exports it.backup.system.routine;
+    opens it.backup.system.routine to javafx.fxml;
 }

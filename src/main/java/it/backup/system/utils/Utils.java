@@ -1,5 +1,6 @@
 package it.backup.system.utils;
 
+import it.backup.system.configuration.schedule.WeekDay;
 import javafx.scene.control.TextArea;
 
 import java.io.File;
@@ -7,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -163,5 +165,18 @@ public class Utils {
         LocalDateTime lastModifiedDateTime2 = instant2.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         return lastModifiedDateTime2.compareTo(lastModifiedDateTime1);
+    }
+
+    public static WeekDay dayOfWeek(DayOfWeek weekDay) {
+        switch (weekDay) {
+            case SUNDAY: return WeekDay.Sunday;
+            case MONDAY: return WeekDay.Monday;
+            case TUESDAY: return WeekDay.Tuesday;
+            case WEDNESDAY: return WeekDay.Wednesday;
+            case THURSDAY: return WeekDay.Thursday;
+            case FRIDAY: return WeekDay.Friday;
+            case SATURDAY: return WeekDay.Saturday;
+            default: return null;
+        }
     }
 }

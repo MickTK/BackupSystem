@@ -8,6 +8,9 @@ import it.backup.system.configuration.schedule.MonthlySchedule;
 import it.backup.system.configuration.schedule.Schedule;
 import it.backup.system.configuration.schedule.WeeklySchedule;
 
+/**
+ * Informazioni di backup
+ */
 public class BackupConfiguration {
 
     String name;       // Nome della configurazione (nome della cartella di backup)

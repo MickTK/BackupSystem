@@ -3,6 +3,7 @@ package it.backup.system;
 import it.backup.system.configuration.BackupConfiguration;
 import it.backup.system.configuration.backup.*;
 import it.backup.system.configuration.schedule.*;
+import it.backup.system.routine.BackgroundProcessor;
 import it.backup.system.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,7 +13,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -479,7 +479,10 @@ public class Controller {
                 //log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
 
                 long lastDeltaTime = System.nanoTime();
-                backup.start();
+                //backup.start();
+                synchronized (BackgroundProcessor.class) {
+                    BackgroundProcessor.addBackup(backup);
+                }
                 long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
                 log("Backup completato in " + deltaTime + " secondi.");
             }
@@ -555,7 +558,9 @@ public class Controller {
                             BackupConfiguration conf = Application.scheduler.configurations.get(i);
                             if (conf.getName().equals(configuration.getName())) {
                                 configurationIndex = i;
-                                Application.scheduler.configurations.set(configurationIndex, configuration);
+                                synchronized (Application.class) {
+                                    Application.scheduler.configurations.set(configurationIndex, configuration);
+                                }
                                 int s = configurationIndex;
                                 cleanConfiguration();
                                 configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
@@ -567,7 +572,9 @@ public class Controller {
             }
             // Viene sovrascritta la configurazione corrente
             else if (configurationIndex > -1) {
-                Application.scheduler.configurations.set(configurationIndex, configuration);
+                synchronized (Application.class) {
+                    Application.scheduler.configurations.set(configurationIndex, configuration);
+                }
                 int s = configurationIndex;
                 cleanConfiguration();
                 configurationBox.setValue(Application.scheduler.configurations.get(s).getName());
@@ -575,7 +582,9 @@ public class Controller {
             }
             // Viene aggiunta la nuova configurazione allo scheduler
             else {
-                Application.scheduler.configurations.add(configuration);
+                synchronized (Application.class) {
+                    Application.scheduler.configurations.add(configuration);
+                }
                 configurationIndex = Application.scheduler.configurations.size() - 1;
                 int s = configurationIndex;
                 cleanConfiguration();
@@ -600,7 +609,9 @@ public class Controller {
             );
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    Application.scheduler.configurations.remove(configurationIndex);
+                    synchronized (Application.class) {
+                        Application.scheduler.configurations.remove(configurationIndex);
+                    }
                     Application.scheduler.saveToFile();
                     cleanConfiguration();
                 }

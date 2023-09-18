@@ -1,6 +1,8 @@
 package it.backup.system;
 
 import it.backup.system.configuration.Scheduler;
+import it.backup.system.routine.BackgroundProcessor;
+import it.backup.system.routine.Routine;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -16,6 +18,8 @@ public class Application extends javafx.application.Application {
 
     static public Scheduler scheduler;
 
+    static public Thread routine, processor;
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -30,6 +34,12 @@ public class Application extends javafx.application.Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+
+        // Threads
+        processor = new Thread(new BackgroundProcessor());
+        processor.start();
+        routine = new Thread(new Routine());
+        routine.start();
     }
 
     public static void main(String[] args) {

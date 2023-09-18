@@ -4,9 +4,11 @@ import it.backup.system.configuration.backup.BackupType;
 import it.backup.system.configuration.schedule.ScheduleType;
 import it.backup.system.configuration.schedule.WeekDay;
 
-import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Wrapper per la serializzazione/deserializzazione configurazioni di backup
+ */
 public class BackupConfigurationData {
     public String name;
 
