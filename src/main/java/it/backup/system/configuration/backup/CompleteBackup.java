@@ -7,9 +7,16 @@ import java.nio.file.Files;
 
 /**
  * Backup completo
+ * Permette di inizializzare ed effettuare un backup completo.
  */
 public class CompleteBackup extends Backup {
 
+    /**
+     * Costruttore
+     * @param sourceFolderPath cartella da salvare
+     * @param destinationFolderPath cartella di destinazione
+     * @throws Exception errore di inizializzazione
+     */
     public CompleteBackup(String sourceFolderPath, String destinationFolderPath) throws Exception {
         super(sourceFolderPath, destinationFolderPath, BackupType.Complete);
     }

@@ -167,6 +167,11 @@ public class Utils {
         return lastModifiedDateTime2.compareTo(lastModifiedDateTime1);
     }
 
+    /**
+     * Converte un valore DayOfWeek in WeekDay
+     * @param weekDay valore da convertire
+     * @return valore corrispondente
+     */
     public static WeekDay dayOfWeek(DayOfWeek weekDay) {
         switch (weekDay) {
             case SUNDAY: return WeekDay.Sunday;

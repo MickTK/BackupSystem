@@ -8,9 +8,16 @@ import java.nio.file.Files;
 
 /**
  * Backup differenziale
+ * Permette di inizializzare ed effettuare un backup differenziale.
  */
 public class DifferentialBackup extends Backup {
 
+    /**
+     * Costruttore
+     * @param sourceFolderPath cartella da salvare
+     * @param destinationFolderPath cartella di destinazione
+     * @throws Exception errore di inizializzazione
+     */
     public DifferentialBackup(String sourceFolderPath, String destinationFolderPath) throws Exception {
         super(sourceFolderPath, destinationFolderPath, BackupType.Differential);
     }

@@ -1,7 +1,7 @@
 package it.backup.system.configuration.schedule;
 
 /**
- * Tipi di pianificazioni esistenti
+ * Tipi di pianificazione
  */
 public enum ScheduleType {
     None,

@@ -14,9 +14,16 @@ import java.util.Set;
 
 /**
  * Backup incrementale
+ * Permette di inizializzare ed effettuare un backup incrementale.
  */
 public class IncrementalBackup extends Backup {
 
+    /**
+     * Costruttore
+     * @param sourceFolderPath cartella da salvare
+     * @param destinationFolderPath cartella di destinazione
+     * @throws Exception errore di inizializzazione
+     */
     public IncrementalBackup(String sourceFolderPath, String destinationFolderPath) throws Exception {
         super(sourceFolderPath, destinationFolderPath, BackupType.Incremental);
     }

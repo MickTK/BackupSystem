@@ -1,7 +1,7 @@
 package it.backup.system.configuration.backup;
 
 /**
- * Tipi di backup esistenti
+ * Tipi di backup
  */
 public enum BackupType {
     Complete,

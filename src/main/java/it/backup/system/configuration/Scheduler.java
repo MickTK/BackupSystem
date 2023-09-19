@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 /**
  * Collezione di configurazioni
+ * Classe incaricata di mantenere tutte le configurazioni di backup.
  */
 public class Scheduler {
     // Percorso del file di configurazione
@@ -50,7 +51,7 @@ public class Scheduler {
     }
 
     /**
-     * Salva lo scheduler su file
+     * Salva le informazioni sulle configurazioni su file
      */
     public void saveToFile() {
         List<BackupConfigurationData> dataC = new ArrayList<>();

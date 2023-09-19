@@ -7,7 +7,9 @@ import it.backup.system.configuration.schedule.WeekDay;
 import java.util.List;
 
 /**
- * Wrapper per la serializzazione/deserializzazione configurazioni di backup
+ * Wrapper per la serializzazione/deserializzazione delle configurazioni di backup
+ * Classe utilizzata per la serializzazione e la deserializzazione in/da formato json.
+ * Contiene tutte le informazioni per poter ricreare l'oggetto BackupConfiguration.
  */
 public class BackupConfigurationData {
     public String name;

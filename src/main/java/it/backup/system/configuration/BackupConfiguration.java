@@ -9,7 +9,9 @@ import it.backup.system.configuration.schedule.Schedule;
 import it.backup.system.configuration.schedule.WeeklySchedule;
 
 /**
- * Informazioni di backup
+ * Informazioni del backup
+ * Mantiene tutte le informazioni relative ad una specifica configurazione.
+ * Una configurazione presente informazioni sul backup da effettuare e la sua pianificazione.
  */
 public class BackupConfiguration {
 
@@ -17,7 +19,15 @@ public class BackupConfiguration {
     Backup backup;     // Informazioni sul backup
     Schedule schedule; // Informazioni sulla pianificazione
 
+    /**
+     * Costruttore
+     */
     public BackupConfiguration() { }
+
+    /**
+     * Costruttore
+     * @param data struttura dati contenente le informazioni sulla configurazione
+     */
     public BackupConfiguration (BackupConfigurationData data) {
         name = data.name;
         try {
@@ -66,6 +76,10 @@ public class BackupConfiguration {
         this.schedule = schedule;
     }
 
+    /**
+     * Converte la configurazione corrente in un oggetto serializzabile
+     * @return oggetto serializzabile
+     */
     public BackupConfigurationData toData() {
         BackupConfigurationData data = new BackupConfigurationData();
         data.name = name;

@@ -14,27 +14,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Classe che si occupa di salvare le informazioni dei backup e lo effettua
+ * Informazioni di backup
+ * Classe che permette di mantenere le informazioni su uno specifico backup.
  */
 public class Backup {
 
-    /* Macros */
     public final String DELETED_FILES_FILE_NAME = "_deleted_._files_"; // Nome del file che tiene traccia dei file eliminati
+    public final String BACKUP_NAME = "%s (b.%d.%d.%d)"; // Nome backup es.: "Nome (b.1.2.3)"
     public final String REGEX = "(.*?)\\s*\\(b\\.(\\d+)\\.(\\d+)\\.(\\d+)\\)"; // Esempio: "Nome backup (b.1.2.3)"
-    public final String BACKUP_NAME = "%s (b.%d.%d.%d)"; // Nome (b.1.2.3)
+    public final String LOG_FILE_NAME = "backup.log"; // Nome del file di log
 
     /* Attributes */
-    BackupType backupType; // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
+    BackupType backupType;     // Rappresenta il tipo di backup da effettuare (completo, incrementale, differenziale)
 
     File sourceFolder;         // Cartella sorgente da salvare
     File backupFolder;         // Cartella del backup corrente
     File previousBackupFolder; // Cartella dell'ultimo backup effettuato (usata per i confronti)
-    File destinationFolder;    // Cartella di destinazione (dove è contenuta la cartella di backup)
+    File destinationFolder;    // Cartella di destinazione (dove sarà contenuta la cartella di backup)
     File deletedFilesFile;     // File che tiene traccia dei file eliminati
-
+    File logFile;              // File di log
     /* Backup log */
-    public final String LOG_FILE_NAME = "backup.log";
-    File logFile;
+
 
     /**
      * Costruttore
@@ -69,7 +69,7 @@ public class Backup {
     /* Backup */
 
     /**
-     * Effettua un backup della sorgente nella destinazione in base al tipo di backup
+     * Effettua un backup della sorgente alla destinazione in base al tipo di backup
      * @throws Exception non esiste un backup precedente (per il differenziale/incrementale)
      */
     public void start() throws Exception { }

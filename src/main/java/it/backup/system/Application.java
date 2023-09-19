@@ -3,11 +3,9 @@ package it.backup.system;
 import it.backup.system.configuration.Scheduler;
 import it.backup.system.routine.BackgroundProcessor;
 import it.backup.system.routine.Routine;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -18,9 +16,11 @@ public class Application extends javafx.application.Application {
 
     static public final boolean DEBUG = false;
 
-    static public Scheduler scheduler;
+    static public Scheduler scheduler; // Informazioni sulle configurazioni di backup
 
-    static public Thread routine, processor;
+    // Operazioni in background
+    static public Thread routine;   // Controlli sulle pianificazioni
+    static public Thread processor; // Esecuzione dei backup
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -30,6 +30,7 @@ public class Application extends javafx.application.Application {
 
         Test.test();
 
+        // Inizializza e mostra l'interfaccia utente
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Backup System");
@@ -55,5 +56,4 @@ public class Application extends javafx.application.Application {
     public static void main(String[] args) {
         launch();
     }
-
 }

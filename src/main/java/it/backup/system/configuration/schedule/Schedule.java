@@ -4,9 +4,9 @@ package it.backup.system.configuration.schedule;
  * Informazioni pianificazione
  */
 public class Schedule {
-    ScheduleType scheduleType;
-    WeeklySchedule weeklySchedule;
-    MonthlySchedule monthlySchedule;
+    ScheduleType scheduleType;       // Tipo di pianificazione: nessuna, settimanale, mensile
+    WeeklySchedule weeklySchedule;   // Informazioni pianificazione settimanale
+    MonthlySchedule monthlySchedule; // Informazioni pianificazione mensile
 
     public ScheduleType getScheduleType() {
         return scheduleType;
@@ -29,7 +29,16 @@ public class Schedule {
         this.monthlySchedule = monthlySchedule;
     }
 
+    /**
+     * Controllo pianificazione
+     * @return restituisce true se la pianificazione può essere eseguita in questo momento, false altrimenti
+     */
     public boolean check() {
-        return false;
+        switch (scheduleType) {
+            default:
+            case None: return false;
+            case Weekly: return weeklySchedule.check();
+            case Monthly: return monthlySchedule.check();
+        }
     }
 }

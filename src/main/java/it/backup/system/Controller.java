@@ -17,13 +17,13 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Controller dell'interfaccia
+ * Controller dell'interfaccia utente
  */
 public class Controller {
 
-    BackupType backupType;
-    ScheduleType scheduleType;
-    int configurationIndex;
+    BackupType backupType;     // Tipo di backup da effettuare (completo, differenziale, incrementale)
+    ScheduleType scheduleType; // Tipo di pianificazione da rispettare (nessuna, settimanale, mensile)
+    int configurationIndex;    // Indice della configurazione attualmente visualizzata
 
     /** Backup **/
     @FXML private ChoiceBox<String> configurationBox;    // Mostra il nome della configurazione corrente
