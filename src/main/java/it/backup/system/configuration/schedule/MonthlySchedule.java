@@ -1,10 +1,9 @@
 package it.backup.system.configuration.schedule;
 
-import it.backup.system.utils.Utils;
-
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -25,13 +24,15 @@ public class MonthlySchedule {
      */
     public boolean check() {
         LocalDateTime now = LocalDateTime.now();
-        if (days.contains(now.getDayOfMonth())) {
+        int lastDay = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
+        if (days.contains(now.getDayOfMonth()) || (days.contains(32) && now.getDayOfMonth() == lastDay)) {
             for (String h : clock) {
-                if (LocalTime.parse(h).equals(now.toLocalTime())) {
+                if (h.equals(DateTimeFormatter.ofPattern("HH:mm").format(now))) {
                     return true;
                 }
             }
         }
         return false;
+
     }
 }
