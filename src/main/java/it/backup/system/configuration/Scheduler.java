@@ -45,7 +45,7 @@ public class Scheduler {
                 }
             }
             catch (Exception e) {
-                System.out.println("Il file di configurazione è corrotto e per tanto non verrà caricato.");
+                System.out.println("Il file di configurazione è corrotto e pertanto non verrà caricato.");
             }
         }
     }

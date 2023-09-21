@@ -15,6 +15,8 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
 
     static public final boolean DEBUG = false;
+    static public final int sleepingTimeRoutine = 10000;
+    static public final int sleepingTimeProcessor = 1000;
 
     static public Scheduler scheduler; // Informazioni sulle configurazioni di backup
 

@@ -1,5 +1,6 @@
 package it.backup.system.routine;
 
+import it.backup.system.Application;
 import it.backup.system.configuration.backup.Backup;
 
 import java.util.ArrayList;
@@ -22,12 +23,20 @@ public class BackgroundProcessor implements Runnable {
      */
     public void run() {
         while (canRun) {
+            try {
+                Thread.sleep(Application.sleepingTimeProcessor);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             synchronized (BackgroundProcessor.class) {
                 try {
                     if (!list.isEmpty()) {
                         list.get(0).start(); // Effettua il primo backup della cods
                         list.remove(0);      // Rimuove il primo backup dalla coda
-                    }
+                    }/*
+                    else {
+                        Thread.sleep(Application.sleepingTime);
+                    }*/
                 } catch (Exception e) { e.printStackTrace(); }
             }
         }

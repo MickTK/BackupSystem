@@ -456,7 +456,11 @@ public class Controller {
         else
             backupType = BackupType.Complete;
 
-        if (Utils.isSourcePathValid(new File(sourcePath.getText()),consoleLog) &&
+        if (sourcePath.getText() == null || sourcePath.getText().isEmpty())
+            log("Inserisci il percorso della cartella da salvare.");
+        else if (destinationPath.getText() == null || destinationPath.getText().isEmpty())
+            log("Inserisci il percorso della cartella di destinazione.");
+        else if (Utils.isSourcePathValid(new File(sourcePath.getText()),consoleLog) &&
                 Utils.isDestinationPathValid(new File(destinationPath.getText()),consoleLog)){
             try {
                 Backup backup;
@@ -474,17 +478,13 @@ public class Controller {
                 }
 
                 consoleLog.setText("");
-                log("Backup in corso.");
                 //log("Numero di cartelle trovate: " + Utils.numberOfFolders(source) + ".");
                 //log("Numero di file trovati: " + Utils.numberOfFiles(source) + ".");
 
-                long lastDeltaTime = System.nanoTime();
-                //backup.start();
+                // Aggiunge il backup alla lista dei backup da effettuare
                 synchronized (BackgroundProcessor.class) {
                     BackgroundProcessor.addBackup(backup);
                 }
-                long deltaTime = (long) ((System.nanoTime() - lastDeltaTime) / 1_000_000_000.0D);
-                log("Backup completato in " + deltaTime + " secondi.");
             }
             catch (Exception e) { e.printStackTrace(); }
         }
@@ -624,7 +624,6 @@ public class Controller {
             alert.showAndWait();
         }
     }
-
 
     /**
      * Aggiunge del testo in coda al campo di log

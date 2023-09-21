@@ -19,6 +19,9 @@ public class Routine implements Runnable {
      */
     public void run() {
         while (canRun) {
+            try {
+                Thread.sleep(Application.sleepingTimeRoutine);
+            } catch (InterruptedException e) { throw new RuntimeException(e); }
             // Salva il timestamp attuale
             String time = DateTimeFormatter.ofPattern(datePattern).format(LocalDateTime.now());
             // Effettua un controllo al minuto
