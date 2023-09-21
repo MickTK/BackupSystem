@@ -37,3 +37,4 @@ build/
 ### Mac OS ###
 .DS_Store
 out/artifacts/BackupSystem_jar/BackupSystem.jar
+scheduler.config

@@ -60,12 +60,8 @@ public class Scheduler {
         String data = new Gson().toJson(dataC);
         File file = new File(configFilePath);
         try {
+            if (file.exists()) file.delete();
             if (!file.exists()) file.createNewFile();
-            Files.write(
-                    file.toPath(),
-                    "".getBytes(),
-                    StandardOpenOption.WRITE
-            );
             Files.write(
                     file.toPath(),
                     data.getBytes(),
