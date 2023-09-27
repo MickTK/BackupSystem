@@ -1,7 +1,10 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Application:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Application_jar</output-path>
+  <artifact type="jar" name="Application:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/Application_jar2</output-path>
     <root id="archive" name="Application.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="Application" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/controlsfx/controlsfx/11.1.2/controlsfx-11.1.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/17.0.6/javafx-controls-17.0.6-linux.jar" path-in-jar="/" />
